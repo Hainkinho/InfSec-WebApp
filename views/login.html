@@ -32,7 +32,7 @@
             <div class="d-flex d-flex justify-content-center mt-5">
                 <button type="submit" class="btn btn-primary" id="login-btn">Login</button>
 
-                <button class="btn btn-primary ml-5" id="register-btn">Register</button>
+                <button class="btn btn-secondary" id="register-btn" style="margin-left: 25px">Register</button>
             </div>
           </form>
 
@@ -40,87 +40,6 @@
 
 
 
-    <script>
-        const form = document.querySelector('form')
-        const loginBtn = document.querySelector('#login-btn')
-        const registerBtn = document.querySelector('#register-btn')
-        const nameTextField = document.getElementById('name-input')
-        const passwordTextField = document.getElementById('password-input')
-
-        form.addEventListener('submit', async e => {
-            e.preventDefault()
-        })
-
-        loginBtn.addEventListener('click', async e => {
-            console.log("login")
-            const name = nameTextField.value
-            const password = passwordTextField.value
-
-            if (name == "" || password == "") {
-                showError("Please fill out all required fields")
-                return
-            }
-
-            const header = {
-                method: 'POST',
-                headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name: name, password: password })
-            }
-
-            const url = `http://localhost:5000/api/users/login`
-            console.log(url)
-            const res = await fetch(url, header)
-            if (res.status == 200) {
-                const redirectionUrl = res.url
-                window.location.href = redirectionUrl
-                console.log()
-                // const json = await res.json()
-                // console.log(json)
-                // const userID = json._id
-                // console.log(userID)
-                // redirectToFeed(userID)
-            } else {
-                showError("Name and password don't match. Please try again...")
-            }
-        })
-
-        registerBtn.addEventListener('click', async e => {
-            console.log("register")
-            const name = nameTextField.value
-            const password = passwordTextField.value
-
-            console.log(name, password)
-
-            const header = {
-                method: 'POST',
-                headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name: name, password: password })
-            }
-
-            const res = await fetch('http://localhost:5000/api/users', header)
-            const json = await res.json()
-
-            console.log(json)
-            const userID = json._id
-            // redirectToFeed(userID)
-        })
-
-        function showError(message) {
-            const errorEl = document.querySelector('#alert')
-            errorEl.classList.remove("d-none")
-            errorEl.innerHTML = message
-        }
-
-        // function redirectToFeed(userID) {
-        //     window.location.href = `http://localhost:5000/feed/${userID}`;
-        // }
-
-    </script>
+    <script src="/views/login.js"></script>
 </body>
 </html>

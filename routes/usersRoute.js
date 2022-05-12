@@ -6,23 +6,18 @@ const bcrypt = require('bcryptjs')
 router.get('/', async (req, res) => {
     try {
         const users = await User.find()
-        res.sendFile('/websites/login.html')
         res.status(200).json(users)   
     } catch (err) {
         console.log(err)
     }
 })
 
-router.get("/test", async (req, res) => {
-    const users = await User.find({ name: { $gt: "" } })
-    console.log(users)
-    res.status(200).json(users)
-})
-
 router.post('/login', async (req, res) => {
     try {
         const name = req.body.name
         const password = req.body.password
+
+        console.log(name, password)
         
         const user = await User.findOne({ name: name })
         if (user == null) {
@@ -34,10 +29,8 @@ router.post('/login', async (req, res) => {
         if (!match) {
             res.status(404).json({})
         } else {
-            // res.status(200).json(user)
-            console.log("redirect")
-            res.redirect(`/feed/${user._id}`)
-
+            const token = await createJwtToken(user)
+            redirectToFeed(res, 200, token)
         }
     } catch (err) {
         console.log(err)
@@ -56,12 +49,28 @@ router.post('/', async (req, res) => {
             password: password
         }).save()
     
-        res.status(200).json(user)   
+        const token = await createJwtToken(user)
+        console.log(token)
+        redirectToFeed(res, 200, token)
     } catch (err) {
         console.log(err)
         res.status(400).json({})
     }
 })
+
+async function createJwtToken(user) {
+    return await user.getSignedJwtToken()
+}
+
+function redirectToFeed(res, statuscode, token) {
+    const options = {
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        httpOnly: false
+    }
+
+    console.log("Redirect to /")
+    res.status(statuscode).cookie('token', token, options).redirect(`/`)
+}
 
 async function encrypt(password) {
     const salt = await bcrypt.genSalt(10)
@@ -72,18 +81,5 @@ async function comparePassword(password1, password2) {
     return await bcrypt.compare(password1, password2)
 }
 
-router.get('/query/:query', async (req, res) => {
-    const query = req.params.query
-    const regex = new RegExp(query, 'i') // i for case insensitive
-
-    console.log(query)
-
-    const users = await User.find({ name: { $regex: regex } })
-    res.status(200).json(users)
-})
-
-
-//console.log("Hello World")
-//res.sendFile('leaderboard.html', {root: __dirname })
 
 module.exports = router

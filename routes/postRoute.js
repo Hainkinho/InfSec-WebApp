@@ -4,38 +4,36 @@ const User = require('../models/user')
 const Post = require('../models/post')
 const Comment = require('../models/comment')
 const bcrypt = require('bcryptjs')
+const { protect } = require('../middleware/auth')
 
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
     try {
-        const userID = req.body.userID
+        const user = req.user
         const text = req.body.text
 
-        console.log(userID, text)
-
         const post = await new Post({
-            userID: userID,
+            userID: user.id,
             text: text,
             comments: []
         }).save()
 
-        const postRes = convertPostToJsonRepsonse(post)
-        res.status(200).json(postRes)
+        res.status(200).json(post)
     } catch (err) {
         console.log(err)
     }
 })
 
-router.post('/comment', async (req, res) => {
+router.post('/comment', protect, async (req, res) => {
     try {
         const postID = req.body.postID
-        const userID = req.body.userID
+        const user = req.user
         const text = req.body.text
 
-        console.log(postID, userID, text)
+        console.log(postID, user.id, text)
 
         const post = await Post.findById(postID)
         const comment = await new Comment({
-            userID: userID,
+            userID: user.id,
             text: text
         }).save()
 

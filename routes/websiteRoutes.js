@@ -5,25 +5,21 @@ const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user')
 
-router.get('/login', async (req, res) => {
-    console.log("Hello World")
+const { protect } = require('../middleware/auth')
 
+router.get('/login', async (req, res) => {
     const pathToFile = path.join(__dirname, '../views', 'login.html')
     res.sendFile(pathToFile)
 })
 
-router.get('/', async (req, res) => {
-    const pathToFile = path.join(__dirname, '../views', 'game.html')
-    res.sendFile(pathToFile)
-})
 
-router.get('/feed/:userID', async (req, res) => {
+router.get('/', protect, async (req, res) => {
     try {
-        const query = req.query.query.toLowerCase()
-
+        let query = req.query.query
+        
         if (query) {
-            const regex = new RegExp(query, 'i') // i for case insensitive
             let posts = await Post.find()
+            query = query.toLowerCase()
 
             let filteredPosts = []
             for (const i in posts) {
@@ -40,25 +36,24 @@ router.get('/feed/:userID', async (req, res) => {
 
             let postsRes = []
             for (const i in filteredPosts) {
-                const res = await convertPostToJsonRepsonse(filteredPosts[i])
+                const res = await convertPostToJsonResponse(filteredPosts[i])
                 postsRes.push(res)
             }
             res.render('feed', { query: query, posts: postsRes })
-        } else {
-            const userID = req.params.userID    
+        } else {  
             const posts = await Post.find()
+            const user = req.user
         
-            const user = await User.findOne({ _id: userID })
             if (user == null) {
+                console.log("Error: User Empty")
                 res.status(404).json({})       
             } else {
-                const users = await User.find()
                 let postsRes = []
                 for (const i in posts) {
-                    const res = await convertPostToJsonRepsonse(posts[i])
+                    const res = await convertPostToJsonResponse(posts[i])
                     postsRes.push(res)
                 }
-                res.render('feed', { users: users, posts: postsRes })  
+                res.render('feed', { posts: postsRes })  
             }
         }
     } catch (err) {
@@ -67,7 +62,8 @@ router.get('/feed/:userID', async (req, res) => {
     }
 })
 
-async function convertPostToJsonRepsonse(post) {
+
+async function convertPostToJsonResponse(post) {
     let postRes = {}
     const user = await User.findById(post.userID)
 
