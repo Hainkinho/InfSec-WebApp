@@ -7,25 +7,17 @@ const sanitize = require('../sanitizer')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
-// router.get('/', async (req, res) => {
-//     try {
-//         const users = await User.find()
-//         res.status(200).json(users)   
-//     } catch (err) {
-//         console.log(err)
-//     }
-// })
 
 router.post('/login', async (req, res) => {
     try {
         let name = req.body.name
         const password = req.body.password
 
-        if (shouldSanitize) {
-            let name = sanitize(name)
-        }
-
         console.log(name, password)
+
+        if (shouldSanitize) {
+            name = sanitize(name)
+        }
         
         const user = await User.findOne({ name: name })
         if (user == null) {
@@ -52,7 +44,7 @@ router.post('/', async (req, res) => {
         const password = await encrypt(req.body.password)
 
         if (shouldSanitize) {
-            let name = sanitize(name)
+            name = sanitize(name)
         }
 
         console.log(req.body.password, password)
@@ -74,9 +66,13 @@ async function createJwtToken(user) {
 
 function redirectToFeed(res, statuscode, token) {
     // TODO: SECURITY: Set httpOnly to true, so that javascript cannot access the cookie from within the browser!
-    const options = {
+    let options = {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        // httpOnly: true
+        httpOnly: false
+    }
+
+    if (shouldSanitize) {
+        options.httpOnly = true // adds more security to cookie, so that within the browser javascript code cannot access it
     }
 
     console.log("Redirect to /")
