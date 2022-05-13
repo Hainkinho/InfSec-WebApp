@@ -8,15 +8,19 @@ npm run start
 
 # Start the server and watch for changes
 npm run dev
+
+# Run Unit Tests
+npm test
 ```
 
 ### Usefull commands
 
 ```bash
 # Add default entries
+node seeder add
 
 # Delete all entries from the database
-
+node seeder delete
 ```
 
 
