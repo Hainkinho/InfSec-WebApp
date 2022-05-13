@@ -4,8 +4,7 @@ const path = require('path');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user')
-const sanitizeSql = require('mongo-sanitize')
-const { sanitize } = require('express-xss-sanitizer');
+const sanitize = require('../sanitizer')
 
 const { protect } = require('../middleware/auth')
 
@@ -22,8 +21,7 @@ router.get('/', protect, async (req, res) => {
         let query = req.query.query
 
         if (shouldSanitize) {
-            query = sanitizeSql(query) // strip out any keys that start with '$' 
-            query = sanitize(query) // Don't allow XSS attacks like <script>
+            query = sanitize(query)
         }
 
         console.log("Query:", query)

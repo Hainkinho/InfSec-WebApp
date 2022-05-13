@@ -3,20 +3,27 @@ const router = express.Router()
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
+const sanitize = require('../sanitizer')
 
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.find()
-        res.status(200).json(users)   
-    } catch (err) {
-        console.log(err)
-    }
-})
+const shouldSanitize = process.env.NODE_ENV == "sanitized"
+
+// router.get('/', async (req, res) => {
+//     try {
+//         const users = await User.find()
+//         res.status(200).json(users)   
+//     } catch (err) {
+//         console.log(err)
+//     }
+// })
 
 router.post('/login', async (req, res) => {
     try {
-        const name = req.body.name
+        let name = req.body.name
         const password = req.body.password
+
+        if (shouldSanitize) {
+            let name = sanitize(name)
+        }
 
         console.log(name, password)
         
@@ -41,8 +48,13 @@ router.post('/login', async (req, res) => {
 // Register
 router.post('/', async (req, res) => {
     try {
-        const name = req.body.name
+        let name = req.body.name
         const password = await encrypt(req.body.password)
+
+        if (shouldSanitize) {
+            let name = sanitize(name)
+        }
+
         console.log(req.body.password, password)
 
         const user = Repo.createUser(name, password)
