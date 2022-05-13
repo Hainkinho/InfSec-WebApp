@@ -27,6 +27,7 @@ router.post('/login', async (req, res) => {
 
         const match = await comparePassword(password, user.password)
         if (!match) {
+            console.log("2")
             res.status(404).json({})
         } else {
             const token = await createJwtToken(user)
@@ -46,7 +47,7 @@ router.get('/logout', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         let name = req.body.name
-        const password = await encrypt(req.body.password)
+        const password = req.body.password
 
         if (shouldSanitize) {
             name = sanitize(name)
@@ -54,7 +55,7 @@ router.post('/', async (req, res) => {
 
         console.log(req.body.password, password)
 
-        const user = Repo.createUser(name, password)
+        const user = await Repo.createUser(name, password)
         const token = await createJwtToken(user)
         redirectToFeed(res, 200, token)
     } catch (err) {
