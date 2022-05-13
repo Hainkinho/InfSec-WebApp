@@ -17,6 +17,7 @@ npm test
 ```
 
 ### Useful commands
+Be carefull with it!
 
 ```bash
 # Add default entries
@@ -26,4 +27,16 @@ node seeder add
 node seeder delete
 ```
 
+
+### Login 
+
+| Name  |  Password |
+|:-:|:-:|
+| taylor_swift  | love  |
+| carlito_love  | test  |
+| buddha_knows  | test  |
+| flo  | test  |
+| natalie  | test  |
+| joachim  | test  |
+| elena  | test  |
 
