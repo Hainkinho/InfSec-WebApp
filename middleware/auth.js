@@ -6,7 +6,8 @@ exports.protect = async function(req, res, next) {
 
     if (!token) {
         console.log("No Token provided in cookies")
-        res.status(400).json({})
+        res.redirect('http://localhost:5000/login').status(400).json({error: "Cannot access feed when not logged in"})
+        return
     }
 
     try {
@@ -15,6 +16,6 @@ exports.protect = async function(req, res, next) {
         req.user = await User.findById(decoded.id)
         next()
     } catch (error) {
-        res.status(400).json({})
+        res.redirect('http://localhost:5000/login').status(400).json({error: "Couldn't verfiy token!"})
     }
 }
