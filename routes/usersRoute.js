@@ -55,9 +55,7 @@ router.post('/', async (req, res) => {
         console.log(req.body.password, password)
 
         const user = Repo.createUser(name, password)
-    
         const token = await createJwtToken(user)
-        console.log(token)
         redirectToFeed(res, 200, token)
     } catch (err) {
         console.log(err)

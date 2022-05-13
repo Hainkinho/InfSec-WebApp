@@ -42,8 +42,6 @@ router.post('/comment', protect, async (req, res) => {
         const post = await Post.findById(postID)
         const comment = await Repo.createCommentForPost(post, user, text)
 
-        console.log(comment)
-
         res.status(200).json(post)
     } catch (err) {
         console.log(err)
