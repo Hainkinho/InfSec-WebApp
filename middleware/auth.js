@@ -6,7 +6,7 @@ exports.protect = async function(req, res, next) {
 
     if (!token) {
         console.log("No Token provided in cookies")
-        res.status(400)
+        res.status(400).json({})
     }
 
     try {
@@ -15,6 +15,6 @@ exports.protect = async function(req, res, next) {
         req.user = await User.findById(decoded.id)
         next()
     } catch (error) {
-        res.status(400)   
+        res.status(400).json({})
     }
 }

@@ -63,9 +63,10 @@ async function createJwtToken(user) {
 }
 
 function redirectToFeed(res, statuscode, token) {
+    // TODO: SECURITY: Set httpOnly to true, so that javascript cannot access the cookie from within the browser!
     const options = {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        httpOnly: false
+        // httpOnly: true
     }
 
     console.log("Redirect to /")
