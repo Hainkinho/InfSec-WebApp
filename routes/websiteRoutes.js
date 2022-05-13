@@ -9,6 +9,8 @@ const { sanitize } = require('express-xss-sanitizer');
 
 const { protect } = require('../middleware/auth')
 
+const shouldSanitize = process.env.NODE_ENV == "sanitized"
+
 router.get('/login', async (req, res) => {
     const pathToFile = path.join(__dirname, '../views', 'login.html')
     res.sendFile(pathToFile)
@@ -19,7 +21,7 @@ router.get('/', protect, async (req, res) => {
     try {
         let query = req.query.query
 
-        if (true) {
+        if (shouldSanitize) {
             query = sanitizeSql(query) // strip out any keys that start with '$' 
             query = sanitize(query) // Don't allow XSS attacks like <script>
         }

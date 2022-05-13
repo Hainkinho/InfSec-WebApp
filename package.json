@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "NODE_ENV=production node server",
+    "sanstart": "NODE_ENV=sanitized node server",
     "dev": "nodemon server",
     "test": "jest --forceExit"
   },
