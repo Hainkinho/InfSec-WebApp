@@ -37,6 +37,11 @@ router.post('/login', async (req, res) => {
     }
 })
 
+// Logout
+router.get('/logout', async (req, res) => {
+    res.clearCookie("token").redirect('http://localhost:5000/login');
+})
+
 // Register
 router.post('/', async (req, res) => {
     try {
