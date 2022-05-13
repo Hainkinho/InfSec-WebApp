@@ -20,6 +20,7 @@ router.get('/login', async (req, res) => {
 router.get('/', protect, async (req, res) => {
     try {
         let query = req.query.query
+        const user = req.user
 
         if (shouldSanitize) {
             query = sanitize(query)
@@ -49,10 +50,9 @@ router.get('/', protect, async (req, res) => {
                 const res = await convertPostToJsonResponse(filteredPosts[i])
                 postsRes.push(res)
             }
-            res.render('feed', { query: query, posts: postsRes })
+            res.render('feed', { username: user.name, query: query, posts: postsRes })
         } else {  
             const posts = await Post.find()
-            const user = req.user
         
             if (user == null) {
                 console.log("Error: User Empty")
@@ -63,7 +63,7 @@ router.get('/', protect, async (req, res) => {
                     const res = await convertPostToJsonResponse(posts[i])
                     postsRes.push(res)
                 }
-                res.render('feed', { posts: postsRes })
+                res.render('feed', { username: user.name, posts: postsRes })
             }
         }
     } catch (err) {

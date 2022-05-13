@@ -73,3 +73,31 @@ p {
 .post .comment:last-child {
     margin-bottom: 0px;
 }
+
+header {
+    position: sticky;
+    top: 0;
+}
+
+#navbar {
+    z-index: 999;
+    background-color: #1F1E22;
+}
+
+#navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    justify-items: center;
+}
+
+#navbar .container div {
+    display: flex;
+    align-items: center;
+}
+
+#logout-btn {
+    margin: 10px 0;
+    margin-left: 15px;
+}
+

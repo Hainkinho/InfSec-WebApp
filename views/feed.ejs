@@ -9,6 +9,31 @@
     <title>Document</title>
 </head>
 <body>
+
+    <header id="navbar">
+        <div class="container">
+            <p>HappyFeed</p>
+
+            <div class="d-flex">
+                <p><%- username %></p>
+
+                <button id="logout-btn" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        const logoutBtn = document.getElementById('logout-btn')
+        logoutBtn.addEventListener('click', async (e) => {
+            console.log("Logout")
+            const res = await fetch('http://localhost:5000/api/users/logout')
+            if (res.redirected) {
+                window.location.href = res.url
+            }
+        })
+    </script>
+
+
     <div class="feed-container">
 
         <h1>Feed</h1>
