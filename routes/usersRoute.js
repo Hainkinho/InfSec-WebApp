@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
+const Repo = require('../repository')
 
 router.get('/', async (req, res) => {
     try {
@@ -44,10 +45,7 @@ router.post('/', async (req, res) => {
         const password = await encrypt(req.body.password)
         console.log(req.body.password, password)
 
-        const user = await new User({
-            name: name,
-            password: password
-        }).save()
+        const user = Repo.createUser(name, password)
     
         const token = await createJwtToken(user)
         console.log(token)

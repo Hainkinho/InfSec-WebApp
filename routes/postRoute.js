@@ -4,6 +4,7 @@ const User = require('../models/user')
 const Post = require('../models/post')
 const Comment = require('../models/comment')
 const bcrypt = require('bcryptjs')
+const Repo = require('../repository')
 const { protect } = require('../middleware/auth')
 
 router.post('/', protect, async (req, res) => {
@@ -11,11 +12,9 @@ router.post('/', protect, async (req, res) => {
         const user = req.user
         const text = req.body.text
 
-        const post = await new Post({
-            userID: user.id,
-            text: text,
-            comments: []
-        }).save()
+        // TODO: Validation
+
+        const post = await Repo.createPost(user, text)
 
         res.status(200).json(post)
     } catch (err) {
@@ -29,16 +28,12 @@ router.post('/comment', protect, async (req, res) => {
         const user = req.user
         const text = req.body.text
 
+        // TODO: Validation
+
         console.log(postID, user.id, text)
 
         const post = await Post.findById(postID)
-        const comment = await new Comment({
-            userID: user.id,
-            text: text
-        }).save()
-
-        post.comments.push(comment._id)
-        await post.save()
+        const comment = await Repo.createCommentForPost(post, user, text)
 
         res.status(200).json(post)
     } catch (err) {

@@ -22,7 +22,11 @@ module.exports = class Repository {
     static async createPost(user, text) {
         if (!user) { throw Error("user is undefined") }
         if (!text || text == "") { throw Error("text is invalid") }
-        return await new Post({ userID: user.id, text: text }).save()
+        return await new Post({ 
+            userID: user.id, 
+            text: text,
+            comments: []
+        }).save()
     }
 
     static async createCommentForPost(post, user, text) {
