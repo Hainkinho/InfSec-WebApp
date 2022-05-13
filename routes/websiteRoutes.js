@@ -4,6 +4,7 @@ const path = require('path');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user')
+const DataMapper = require('../dataMapper')
 const sanitize = require('../sanitizer')
 
 const { protect } = require('../middleware/auth')
@@ -47,7 +48,7 @@ router.get('/', protect, async (req, res) => {
 
             let postsRes = []
             for (const i in filteredPosts) {
-                const res = await convertPostToJsonResponse(filteredPosts[i])
+                const res = await DataMapper.mapPostRelationsToObj(posts[i])
                 postsRes.push(res)
             }
             res.render('feed', { username: user.name, query: query, posts: postsRes })
@@ -60,7 +61,7 @@ router.get('/', protect, async (req, res) => {
             } else {
                 let postsRes = []
                 for (const i in posts) {
-                    const res = await convertPostToJsonResponse(posts[i])
+                    const res = await DataMapper.mapPostRelationsToObj(posts[i])
                     postsRes.push(res)
                 }
                 res.render('feed', { username: user.name, posts: postsRes })
@@ -72,29 +73,5 @@ router.get('/', protect, async (req, res) => {
     }
 })
 
-
-async function convertPostToJsonResponse(post) {
-    let postRes = {}
-    const user = await User.findById(post.userID)
-
-    postRes.id = post._id
-    postRes.author = user.name
-    postRes.text = post.text
-
-    let comments = []
-    for (const i in post.comments) {
-        const commentID = post.comments[i]
-        const comment = await Comment.findById(commentID)
-        if (!comment) { continue }
-        const commentUser = await User.findById(comment.userID)
-        comments.push({
-            author: commentUser.name,
-            text: comment.text
-        })
-    }
-
-    postRes.comments = comments
-    return postRes
-}
 
 module.exports = router
