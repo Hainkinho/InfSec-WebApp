@@ -6,6 +6,9 @@ A small university project to demonstrate brutal information security attacks on
 # Start the server
 npm run start
 
+# Start the server with automatic sanitizing user inputs
+npm run sanstart
+
 # Start the server and watch for changes
 npm run dev
 
@@ -13,7 +16,7 @@ npm run dev
 npm test
 ```
 
-### Usefull commands
+### Useful commands
 
 ```bash
 # Add default entries
