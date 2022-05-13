@@ -12,11 +12,15 @@ const app = express()
 
 app.set('view engine', 'ejs')
 
+// Middleware
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.use(express.static(__dirname));
+
+const logger = require('./middleware/logger')
+app.use(logger) 
 
 
 const websiteRoutes = require('./routes/websiteRoutes')
@@ -27,6 +31,7 @@ app.use('/api/users', usersRoute)
 
 const postRoute = require('./routes/postRoute')
 app.use('/api/posts', postRoute)
+
 
 const PORT = process.env.PORT || 5000
 
