@@ -65,7 +65,6 @@ async function createJwtToken(user) {
 }
 
 function redirectToFeed(res, statuscode, token) {
-    // TODO: SECURITY: Set httpOnly to true, so that javascript cannot access the cookie from within the browser!
     let options = {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
         httpOnly: false
@@ -75,8 +74,11 @@ function redirectToFeed(res, statuscode, token) {
         options.httpOnly = true // adds more security to cookie, so that within the browser javascript code cannot access it
     }
 
-    console.log("Redirect to /")
-    res.status(statuscode).cookie('token', token, options).redirect(`/`)
+    console.log("Sending redirection link to feed view")
+    res
+        .cookie('token', token, options)
+        .redirect('http://localhost:5000')
+        .status(statuscode)
 }
 
 async function encrypt(password) {

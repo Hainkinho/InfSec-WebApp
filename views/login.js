@@ -30,9 +30,9 @@ loginBtn.addEventListener('click', async e => {
     const url = `http://localhost:5000/api/users/login`
     console.log(url)
     const res = await fetch(url, header)
-    if (res.status == 200) {
-        const redirectionUrl = res.url
-        window.location.href = redirectionUrl
+
+    if (res.redirected) {
+        window.location.href = res.url
     } else {
         showError("Name and password don't match. Please try again...")
     }
@@ -45,8 +45,14 @@ registerBtn.addEventListener('click', async e => {
 
     console.log(name, password)
 
+    if (name == "" || password == "") {
+        showError("Please fill out all required fields")
+        return
+    }
+
     const header = {
         method: 'POST',
+        redirect: 'follow',
         headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -55,9 +61,8 @@ registerBtn.addEventListener('click', async e => {
     }
 
     const res = await fetch('http://localhost:5000/api/users', header)
-    if (res.status == 200) {
-        const redirectionUrl = res.url
-        window.location.href = redirectionUrl
+    if (res.redirected) {
+        window.location.href = res.url
     } else {
         showError("Name and password don't match. Please try again...")
     }

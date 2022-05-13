@@ -16,6 +16,7 @@ router.get('/login', async (req, res) => {
 })
 
 
+// Feed
 router.get('/', protect, async (req, res) => {
     try {
         let query = req.query.query
@@ -62,7 +63,7 @@ router.get('/', protect, async (req, res) => {
                     const res = await convertPostToJsonResponse(posts[i])
                     postsRes.push(res)
                 }
-                res.render('feed', { posts: postsRes })  
+                res.render('feed', { posts: postsRes })
             }
         }
     } catch (err) {
