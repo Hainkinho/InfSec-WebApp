@@ -49,4 +49,12 @@ module.exports = class Repository {
         await Post.findByIdAndDelete(post.id)
     }
 
+    static async deleteCommentFromPost(comment, post) {
+        if (!comment) { throw Error("comment is not defined") }
+        if (!post) { throw Error("post is not defined") }
+        const commentID = comment.id
+        await Comment.findByIdAndDelete(commentID)
+        post.comments = post.comments.filter(id => { id != commentID })
+    }
+
 }

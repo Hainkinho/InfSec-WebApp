@@ -68,5 +68,28 @@ router.delete('/', adminOnlyProtect, async (req, res) => {
 })
 
 
+router.delete('/comment', adminOnlyProtect, async (req, res) => {
+    try {
+        const postID = req.body.postID
+        const commentID = req.body.commentID
+
+        if (!postID) {
+            throw Error('postID not defined')
+        } else if (!commentID) {
+            throw Error('commentID not defined')
+        }
+
+        const post = await Post.findById(postID)
+        const comment = await Comment.findById(commentID)
+        await Repo.deleteCommentFromPost(comment, post)
+
+        res.status(200).json({ success: true})
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({})
+    }
+})
+
+
 
 module.exports = router
