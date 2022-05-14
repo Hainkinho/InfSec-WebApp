@@ -1,5 +1,18 @@
 A small university project to demonstrate brutal information security attacks on an innocent server. Our main focus for this project was to show off one of the biggest web server vulnerabilities - injections as well as broken access control.
 
+# Requirements
+
+To run the server you need to have node installed:
+https://nodejs.org/en/download/
+
+Check if the installation was successful by typing ... 
+```bash
+node -v
+
+npm -v
+```
+... in the command line. Both commands should show you the currently installed version number.
+
 # Building
 
 ```bash
@@ -16,8 +29,11 @@ npm run dev
 npm test
 ```
 
+# Run Web App
+After you have started the server successfully you can finally check out the web app. Just type in http://localhost:5000/ in your browser. The recommended browser is Chrome, because it supports most of the CSS features and it's the only browser I have tested the web app.
+
 # Useful commands
-Be carefull with it!
+Be careful with it!
 
 ```bash
 # Add default entries

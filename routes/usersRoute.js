@@ -27,7 +27,6 @@ router.post('/login', async (req, res) => {
 
         const match = await comparePassword(password, user.password)
         if (!match) {
-            console.log("2")
             res.status(404).json({})
         } else {
             const token = await createJwtToken(user)
