@@ -64,6 +64,19 @@ p {
     border-radius: 6px;
 }
 
+.delete-post-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    background-color: #F44786;
+    color: #1F1E22;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+}
+
 .post-message {
     font-size: 18px;
 }

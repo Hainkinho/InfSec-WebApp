@@ -36,7 +36,7 @@ router.get('/', protect, async (req, res) => {
         } else {  
             const posts = await Post.find()
             const postsRes = await mapPostsRelationsToObjArray(posts)
-            res.render('feed', { username: user.name, posts: postsRes })
+            res.render('feed', { username: user.name, posts: postsRes, canEdit: false })
         }
     } catch (err) {
         console.log(err)
@@ -50,7 +50,7 @@ router.get('/edit', adminOnlyProtect, async (req, res) => {
         const user = req.user
         const posts = await Post.find()
         const postsRes = await mapPostsRelationsToObjArray(posts)
-        res.render('feed', { username: user.name, posts: postsRes })
+        res.render('feed', { username: user.name, posts: postsRes, canEdit: true })
     } catch (err) {
         console.log(err)
     }

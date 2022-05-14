@@ -36,21 +36,28 @@
 
 
     <div class="feed-container">
-    
-    <% if (typeof query == 'string' && query) { %>
-        <p>Query: <%- query %> </p>
+
+    <% if (!canEdit) { %> 
+        <% if (typeof query == 'string' && query) { %>
+            <p>Query: <%- query %> </p>
+        <% } %> 
+
+        <form id="searchbar-form" method="GET">
+            <div class="form-group mb-3">
+                <input type="name" name="query" class="form-control" id="searchbar"  placeholder="Search ..." value="<%= locals.query || "" %>">
+            </div>
+        </form>
+
     <% } %> 
-
-    <form id="searchbar-form" method="GET">
-        <div class="form-group mb-3">
-            <input type="name" name="query" class="form-control" id="searchbar"  placeholder="Search ..." value="<%= locals.query || "" %>">
-        </div>
-    </form>
-
 
     <% for (const i in posts) { %>     
         <% const post = posts[i] %> 
         <div class="post" id="<%- post._id %>">
+
+            <% if (canEdit) { %> 
+                <button class="delete-post-btn">x</button>
+            <% } %> 
+
             <p class="post-text"><%- post.text %></p> 
             <p class="post-author mb-4 mt-2"><%- post.user.name %></p>
 
@@ -123,6 +130,22 @@
             if (res.status == 200) {
                 window.location.reload();
             }
+        }
+    </script>
+
+    <script>
+        const deletePostBtns = document.getElementsByClassName('delete-post-btn')
+        
+        Array.from(deletePostBtns).forEach(el => {
+            el.addEventListener('click', deletePost)
+        })
+
+        async function deletePost(e) {
+            console.log("Delete Post")
+            const deleteBtn = e.target
+            const postContainerEl = deleteBtn.parentElement
+            const postID = postContainerEl.id
+            console.log(postID)
         }
     </script>
 </body>
