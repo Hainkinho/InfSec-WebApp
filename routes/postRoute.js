@@ -5,7 +5,7 @@ const Post = require('../models/post')
 const Comment = require('../models/comment')
 const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
-const { protect } = require('../middleware/auth')
+const { protect, adminOnlyProtect } = require('../middleware/auth')
 const sanitize = require('../sanitizer')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
@@ -43,6 +43,24 @@ router.post('/comment', protect, async (req, res) => {
         const comment = await Repo.createCommentForPost(post, user, text)
 
         res.status(200).json(post)
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({})
+    }
+})
+
+router.delete('/', adminOnlyProtect, async (req, res) => {
+    try {
+        const postID = req.body.postID
+
+        if (!postID) {
+            throw Error('postID not defined')
+        }
+
+        const post = await Post.findById(postID)
+        await Repo.deletePost(post)
+
+        res.status(200).json({ success: true})
     } catch (err) {
         console.log(err)
         res.status(400).json({})
