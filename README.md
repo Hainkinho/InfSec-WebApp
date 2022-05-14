@@ -32,6 +32,14 @@ npm test
 # Run Web App
 After you have started the server successfully you can finally check out the web app. Just type in http://localhost:5000/ in your browser. The recommended browser is Chrome, because it supports most of the CSS features and it's the only browser I have tested the web app.
 
+### Endpoints
+
+| Endpoint  |  Description |
+|:-:|:-:|
+| /  | Feed Page |
+| /login  | Login Page |
+| /edit  | Feed Page **(admin-only)**, where he can delete posts/comments |
+
 # Useful commands
 Be careful with it!
 
@@ -46,6 +54,13 @@ node seeder delete
 
 # Login 
 
+### Admin
+
+| Name  |  Password |
+|:-:|:-:|
+| admin  | admin |
+
+### Normal User
 | Name  |  Password |
 |:-:|:-:|
 | taylor_swift  | love  |
