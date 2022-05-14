@@ -30,7 +30,7 @@ function redirectToLoginPage(res, statusCode, errorMessage) {
 exports.adminOnlyProtect = async function(req, res, next) {
     userProtect(req, res, () => {
         // TODO: check if user has admin role!
-        if (req.user.name != 'SonGoku') {
+        if (req.user.name != 'admin') {
             res.status(401).json({ error: 'Admin only page' })
             return
         }
