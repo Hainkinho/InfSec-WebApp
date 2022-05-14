@@ -146,6 +146,20 @@
             const postContainerEl = deleteBtn.parentElement
             const postID = postContainerEl.id
             console.log(postID)
+
+            const header = {
+                method: 'DELETE',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ postID: postID })
+            }
+
+            const res = await fetch('http://localhost:5000/api/posts/', header)
+            if (res.status == 200) {
+                window.location.reload();
+            }
         }
     </script>
 </body>
