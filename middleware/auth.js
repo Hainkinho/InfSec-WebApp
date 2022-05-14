@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 
-exports.protect = async function(req, res, next) {
+const userProtect = async function(req, res, next) {
     const token = req.cookies.token
 
     if (!token) {
@@ -26,3 +26,17 @@ exports.protect = async function(req, res, next) {
 function redirectToLoginPage(res, statusCode, errorMessage) {
     res.redirect('http://localhost:5000/login').status(statusCode).json({error: errorMessage})
 }
+
+exports.adminOnlyProtect = async function(req, res, next) {
+    userProtect(req, res, () => {
+        // TODO: check if user has admin role!
+        if (req.user.name != 'SonGoku') {
+            res.status(401).json({ error: 'Admin only page' })
+            return
+        }
+        next()
+    })
+}
+
+
+exports.protect = userProtect
