@@ -118,7 +118,7 @@ describe("Create User", () => {
 describe("Create User", () => {
 
     test('Test create Comment', async () => {
-        const { user, post } = await getTestCommentAndUser()
+        const { user, post } = await getTestPostAndUser()
         const text = 'A Comment'
 
         const comment = await Repo.createCommentForPost(post, user, text)
@@ -129,12 +129,45 @@ describe("Create User", () => {
     })
 
     test('Test create Comment with empty message', async () => {
-        const { user, post } = await getTestCommentAndUser()
+        const { user, post } = await getTestPostAndUser()
 
         await expect(
             Repo.createCommentForPost(post, user, '')
         ).rejects.toThrow()
     })
+})
+
+
+describe("Create User", () => {
+
+    test('Test delete Post', async () => {
+        const { user, post } = await getTestPostAndUser()
+        const text = 'A Comment'
+
+        const comment = await Repo.createCommentForPost(post, user, text)
+
+        expect(comment.text).toEqual(text)
+        expect(comment.userID == user.id).toEqual(true)
+        expect(post.comments.includes(comment.id)).toEqual(true)
+    })
+})
+
+test('Test delete post', async () => {
+    const { user, post } = await getTestPostAndUser()
+    const comment1 = await Repo.createCommentForPost(post, user, "first comment")
+    const comment2 = await Repo.createCommentForPost(post, user, "second comment")
+    const postID = post.id
+    const commentID1 = comment1.id
+    const commentID2 = comment2.id
+    await Repo.deletePost(post)
+
+    const deletedPost = await Post.findById(postID)
+    const deletedComment1 = await Comment.findById(commentID1)
+    const deletedComment2 = await Comment.findById(commentID2)
+
+    expect(deletedPost).toEqual(null)
+    expect(deletedComment1).toEqual(null)
+    expect(deletedComment2).toEqual(null)
 })
 
 
@@ -145,7 +178,7 @@ const getTestUser = async () => {
     return await Repo.createUser("test", "123")
 }
 
-const getTestCommentAndUser = async () => {
+const getTestPostAndUser = async () => {
     const user = await getTestUser()
     const post = await Repo.createPost(user, 'A message')
     return { user, post }
