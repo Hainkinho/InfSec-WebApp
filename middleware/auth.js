@@ -6,16 +6,23 @@ exports.protect = async function(req, res, next) {
 
     if (!token) {
         console.log("No Token provided in cookies")
-        res.redirect('http://localhost:5000/login').status(400).json({error: "Cannot access feed when not logged in"})
+        redirectToLoginPage(res, 400, "Cannot access feed when not logged in!")
         return
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        // console.log("Token:", decoded)
         req.user = await User.findById(decoded.id)
+        if (!req.user) {
+            redirectToLoginPage(res, 400, "Couldn't find user!")
+            return
+        }
         next()
     } catch (error) {
-        res.redirect('http://localhost:5000/login').status(400).json({error: "Couldn't verfiy token!"})
+        redirectToLoginPage(res, 400, "Couldn't verfiy token!")
     }
+}
+
+function redirectToLoginPage(res, statusCode, errorMessage) {
+    res.redirect('http://localhost:5000/login').status(statusCode).json({error: errorMessage})
 }
