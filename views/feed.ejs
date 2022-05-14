@@ -73,6 +73,10 @@
                 <% const comment = post.comments[commentIndex] %> 
                 <div class="comment">
                     <p><b><%- comment.user.name %>:</b> <%- comment.text %> </p>
+
+                    <% if (canEdit) { %> 
+                        <button class="delete-comment-btn" id="<%- comment._id %>" >x</button>
+                    <% } %> 
                 </div>
             <% } %>  
         </div>
@@ -135,9 +139,14 @@
 
     <script>
         const deletePostBtns = document.getElementsByClassName('delete-post-btn')
+        const deleteCommentBtns = document.getElementsByClassName('delete-comment-btn')
         
         Array.from(deletePostBtns).forEach(el => {
             el.addEventListener('click', deletePost)
+        })
+
+        Array.from(deleteCommentBtns).forEach(el => {
+            el.addEventListener('click', deleteComment)
         })
 
         async function deletePost(e) {
@@ -156,11 +165,35 @@
                 body: JSON.stringify({ postID: postID })
             }
 
-            const res = await fetch('http://localhost:5000/api/posts/', header)
+            const res = await fetch('http://localhost:5000/api/posts/comment', header)
             if (res.status == 200) {
                 window.location.reload();
             }
         }
+
+        async function deleteComment(e) {
+            console.log("Delete Comment")
+            const deleteBtn = e.target
+            const commentID = deleteBtn.id
+            const postContainerEl = deleteBtn.parentElement.parentElement
+            const postID = postContainerEl.id
+            console.log(postID, commentID)
+
+            const header = {
+                method: 'DELETE',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ postID: postID, commentID: commentID })
+            }
+
+            const res = await fetch('http://localhost:5000/api/posts/comment', header)
+            if (res.status == 200) {
+                window.location.reload();
+            }
+        }
+
     </script>
 </body>
 </html>

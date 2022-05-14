@@ -114,6 +114,10 @@ p {
 }
 
 .post .comment {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    justify-content: space-between;
     background-color: #2E2D37;
     padding: 10px 12px;
     margin-bottom: 10px;
@@ -121,8 +125,21 @@ p {
 }
 
 .post .comment b {
+    flex-grow: 99;
+    flex-basis: 99;
     font-weight: bold;
     color: #F44786;
+}
+
+.delete-comment-btn {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    background-color: #F44786;
+    color: #1F1E22;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
 }
 
 .post .comment:last-child {
