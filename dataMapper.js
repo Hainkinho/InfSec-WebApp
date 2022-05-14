@@ -5,10 +5,7 @@ module.exports = class DataMapper {
     static async mapPostRelationsToObj(post) {
         let postRes = post.toObject()
         const user = await User.findById(post.userID)
-    
-        const userObj = user.toObject()
-        
-        postRes.user = userObj
+        postRes.user = user.toObject()
     
         let comments = []
         for (const i in post.comments) {
@@ -16,9 +13,8 @@ module.exports = class DataMapper {
             const comment = await Comment.findById(commentID)
             if (!comment) { continue }
             const commentUser = await User.findById(comment.userID)
-            const commentUserObj = commentUser.toObject()
             let commentObj = comment.toObject()
-            commentObj.user = commentUserObj
+            commentObj.user = commentUser.toObject()
             comments.push(commentObj)
         }
     
