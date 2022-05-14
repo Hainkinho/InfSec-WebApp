@@ -32,7 +32,7 @@ router.get('/', protect, async (req, res) => {
         if (query) {
             const filteredPosts = await getFilteredPosts(query)
             const postsRes = await mapPostsRelationsToObjArray(filteredPosts)
-            res.render('feed', { username: user.name, query: query, posts: postsRes })
+            res.render('feed', { username: user.name, query: query, posts: postsRes, canEdit: false })
         } else {  
             const posts = await Post.find()
             const postsRes = await mapPostsRelationsToObjArray(posts)
