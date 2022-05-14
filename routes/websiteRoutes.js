@@ -7,7 +7,7 @@ const User = require('../models/user')
 const DataMapper = require('../dataMapper')
 const sanitize = require('../sanitizer')
 
-const { protect } = require('../middleware/auth')
+const { protect, adminOnlyProtect } = require('../middleware/auth')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -41,6 +41,18 @@ router.get('/', protect, async (req, res) => {
     } catch (err) {
         console.log(err)
         res.status(404).json({})
+    }
+})
+
+// admin-only edit page
+router.get('/edit', adminOnlyProtect, async (req, res) => {
+    try {
+        const user = req.user
+        const posts = await Post.find()
+        const postsRes = await mapPostsRelationsToObjArray(posts)
+        res.render('feed', { username: user.name, posts: postsRes })
+    } catch (err) {
+        console.log(err)
     }
 })
 
