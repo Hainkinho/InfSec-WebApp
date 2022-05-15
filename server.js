@@ -22,6 +22,8 @@ app.use(express.static(__dirname));
 const logger = require('./middleware/logger')
 app.use(logger) 
 
+const dbLogger = require('./middleware/dbLogger')
+app.use(dbLogger)
 
 const websiteRoutes = require('./routes/websiteRoutes')
 app.use('', websiteRoutes)
