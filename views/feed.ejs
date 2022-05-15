@@ -48,11 +48,19 @@
             </div>
         </form>
 
+        <section class="feed-section-container" id="post-creator-container">
+            <div class="comment-form">
+                <input type="text" class="comment-field" placeholder="Tell us something…">
+    
+                <button class="btn btn-primary comment-btn" id="add-post-btn" disabled>Submit</button>
+            </div>
+        </section>
+
     <% } %> 
 
     <% for (const i in posts) { %>     
         <% const post = posts[i] %> 
-        <div class="post" id="<%- post._id %>">
+        <section class="feed-section-container post-container" id="<%- post._id %>">
 
             <% if (canEdit) { %> 
                 <button class="delete-post-btn">x</button>
@@ -79,7 +87,7 @@
                     <% } %> 
                 </div>
             <% } %>  
-        </div>
+        </section>
     <% } %> 
 
     </div>
@@ -95,6 +103,8 @@
     <script>
         const commentTextFields = document.getElementsByClassName("comment-field") 
         const commentBtns = document.getElementsByClassName("comment-btn")
+        const commentBtnsArray = Array.from(commentBtns).filter(el => {el.id != 'add-post-btn'})
+        const addPostBtn = document.getElementById("add-post-btn")
 
         Array.from(commentTextFields).forEach(el => {
             el.addEventListener('input', (e) => {
@@ -106,7 +116,7 @@
             })
         })
 
-        Array.from(commentBtns).forEach(el => {
+        commentBtnsArray.forEach(el => {
             el.addEventListener('click', clickedCommentBtn)
         })
 
@@ -135,6 +145,31 @@
                 window.location.reload();
             }
         }
+
+        addPostBtn.addEventListener('click', async e => {
+            const btnEl = e.target
+            const postContainerEl = btnEl.parentElement.parentElement
+            const commentFieldEl = postContainerEl.querySelector('.comment-field')
+            const postText = commentFieldEl.value
+
+            console.log(postText)
+
+            const header = {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: postText })
+            }
+
+            const res = await fetch('http://localhost:5000/api/posts', header)
+            const json = await res.json()
+            if (res.status == 200) {
+                window.location.reload();
+            }
+        })
+
     </script>
 
     <script>

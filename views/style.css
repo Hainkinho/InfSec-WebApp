@@ -47,12 +47,16 @@ p {
     color: white;
 }
 
-.post {
-    position: relative;
-    padding: 30px 20px;
+.feed-section-container {
+    /* padding: 30px 20px; */
+    padding: 20px 20px;
     background-color: #413E47;
     margin: 40px 0;
     border-radius: 6px;
+}
+
+.post-container {
+    position: relative;
 }
 
 .delete-post-btn {
@@ -83,12 +87,15 @@ p {
     justify-content: space-between;
     justify-items: center;
     align-items: center;
-    margin-top: 40px;
-    margin-bottom: 35px;
     width: 100%;
 }
 
-.post .comment-field {
+.post-container .comment-form {
+    margin-top: 40px;
+    margin-bottom: 35px;
+}
+
+.comment-form .comment-field {
     background-color: unset;
     border: none;
     flex-basis: 99;
@@ -104,7 +111,7 @@ p {
     border: none;
 }
 
-.post .comment {
+.post-container .comment {
     display: flex;
     justify-items: center;
     align-items: center;
@@ -115,7 +122,7 @@ p {
     word-wrap: break-word;
 }
 
-.post .comment b {
+.comment-form .comment b {
     flex-grow: 99;
     flex-basis: 99;
     font-weight: bold;
@@ -133,7 +140,7 @@ p {
     border: none;
 }
 
-.post .comment:last-child {
+.post-container .comment:last-child {
     margin-bottom: 0px;
 }
 
