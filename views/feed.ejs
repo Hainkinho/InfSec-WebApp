@@ -106,14 +106,13 @@
     <script>
         const commentTextFields = document.getElementsByClassName("comment-field") 
         const commentBtns = document.getElementsByClassName("comment-btn")
-        const commentBtnsArray = Array.from(commentBtns).filter(el => {el.id != 'add-post-btn'})
+        const commentBtnsArray = Array.from(commentBtns).filter(el => { return el.id != 'add-post-btn'})
         const addPostBtn = document.getElementById("add-post-btn")
 
         Array.from(commentTextFields).forEach(el => {
             el.addEventListener('input', (e) => {
                 const textField = e.target
                 const commentBtn = textField.parentElement.querySelector('.comment-btn')
-                // console.log(commentBtn)
                 commentBtn.disabled = textField.value.length <= 0
                 console.log(commentBtn.disabled)
             })
@@ -122,6 +121,10 @@
         commentBtnsArray.forEach(el => {
             el.addEventListener('click', clickedCommentBtn)
         })
+
+        if (addPostBtn) {
+            addPostBtn.addEventListener('click', addPostBtnClicked)
+        }
 
         async function clickedCommentBtn(e) {
             const btnEl = e.target
@@ -149,7 +152,7 @@
             }
         }
 
-        addPostBtn.addEventListener('click', async e => {
+        async function addPostBtnClicked(e) {
             const btnEl = e.target
             const postContainerEl = btnEl.parentElement.parentElement
             const commentFieldEl = postContainerEl.querySelector('.comment-field')
@@ -171,7 +174,7 @@
             if (res.status == 200) {
                 window.location.reload();
             }
-        })
+        }
 
     </script>
 
@@ -203,7 +206,7 @@
                 body: JSON.stringify({ postID: postID })
             }
 
-            const res = await fetch('http://localhost:5000/api/posts/comment', header)
+            const res = await fetch('http://localhost:5000/api/posts', header)
             if (res.status == 200) {
                 window.location.reload();
             }
