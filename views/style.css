@@ -128,7 +128,7 @@ p {
     word-wrap: break-word;
 }
 
-.comment-form .comment b {
+.post-container .comment b {
     flex-grow: 99;
     flex-basis: 99;
     font-weight: bold;
