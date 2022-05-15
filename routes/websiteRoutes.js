@@ -31,12 +31,10 @@ router.get('/', protect, async (req, res) => {
 
         if (query) {
             const filteredPosts = await getFilteredPosts(query)
-            const postsRes = await mapPostsRelationsToObjArray(filteredPosts)
-            res.render('feed', { username: user.name, query: query, posts: postsRes, canEdit: false })
+            sendFeed(res, filteredPosts, user.name, query)
         } else {  
             const posts = await Post.find()
-            const postsRes = await mapPostsRelationsToObjArray(posts)
-            res.render('feed', { username: user.name, posts: postsRes, canEdit: false })
+            sendFeed(res, posts, user.name, null)
         }
     } catch (err) {
         console.log(err)
@@ -49,12 +47,22 @@ router.get('/edit', adminOnlyProtect, async (req, res) => {
     try {
         const user = req.user
         const posts = await Post.find()
-        const postsRes = await mapPostsRelationsToObjArray(posts)
-        res.render('feed', { username: user.name, posts: postsRes, canEdit: true })
+        const canEdit = true
+        sendFeed(res, posts, user.name, null, canEdit)
     } catch (err) {
         console.log(err)
     }
 })
+
+async function sendFeed(res, posts, username, query, canEdit = false) {
+    posts.sort((a,b) => { 
+        const aDate = new Date(a.createdAt)
+        const bDate = new Date(b.createdAt)
+        return bDate - aDate
+    })
+    const postsRes = await mapPostsRelationsToObjArray(posts)
+    res.render('feed', { username: username, query: query, posts: postsRes, canEdit: canEdit })
+}
 
 async function getFilteredPosts(query) {
     let res = []
