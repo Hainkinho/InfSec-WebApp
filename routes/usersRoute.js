@@ -4,6 +4,7 @@ const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
 const sanitize = require('../sanitizer')
+const { protect } = require('../middleware/auth')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -55,6 +56,42 @@ router.post('/', async (req, res) => {
         const user = await Repo.createUser(name, password)
         const token = await user.getSignedJwtToken()
         redirectToFeed(res, 200, token)
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({})
+    }
+})
+
+router.patch('/update-password', protect, async (req, res) => {
+    try {
+        const user = req.user
+        const curPassword = req.body.curPassword
+        const newPassword = req.body.newPassword
+        const newPassword2 = req.body.newPassword2
+
+        // NOTE: Here is a vulnerability (Broken-Acces-Control ... Cross-Site Request Forgery)
+        // we only check if the curPassword matches the old one. But if the user does not provide a curPassword in the request, then this check doesn't happen!
+
+        if (curPassword) {
+            const match = await comparePassword(curPassword, user.password)
+            if (!match) {
+                res.status(401).json({ error: 'password does not match with current password' })
+                return
+            }
+        }
+
+        if (newPassword != newPassword2) {
+            res.status(401).json({ error: 'new password must match with repeated one' })
+            return
+        }
+
+        if (!newPassword || newPassword == '') {
+            res.status(401).json({ error: 'No password sent' })
+            return
+        }
+
+        await Repo.updatePassword(user, newPassword)
+        res.status(200).json({ success: true })
     } catch (err) {
         console.log(err)
         res.status(400).json({})

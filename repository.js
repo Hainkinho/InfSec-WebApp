@@ -13,6 +13,13 @@ module.exports = class Repository {
         return await new User({ name: name, password: encryptedPassword }).save()
     }
 
+    // TODO: write Unit Test
+    static async updatePassword(user, newPassword) {
+        const encryptedPassword = await Repository.encrypt(newPassword)
+        user.password = encryptedPassword
+        await user.save()
+    }
+
     // TODO: Move methode to another class - maybe inside user as a static methode
     static async encrypt(password) {
         const salt = await bcrypt.genSalt(10)
