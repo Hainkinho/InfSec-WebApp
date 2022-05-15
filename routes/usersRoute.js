@@ -19,19 +19,19 @@ router.post('/login', async (req, res) => {
             name = sanitize(name)
         }
         
-        const user = await User.findOne({ name: name })
-        if (user == null) {
-            res.status(404).json({})
-            return
+        // Approach so that we can show an Injections
+        const users = await User.find({ name: name })
+        
+        for (const i in users) {
+            const user = users[i]
+            const match = await comparePassword(password, user.password)
+            if (match) {
+                const token = await user.getSignedJwtToken()
+                redirectToFeed(res, 200, token)
+                return    
+            }
         }
-
-        const match = await comparePassword(password, user.password)
-        if (!match) {
-            res.status(404).json({})
-        } else {
-            const token = await createJwtToken(user)
-            redirectToFeed(res, 200, token)
-        }
+        res.status(404).json({})
     } catch (err) {
         console.log(err)
     }
@@ -52,10 +52,8 @@ router.post('/', async (req, res) => {
             name = sanitize(name)
         }
 
-        console.log(req.body.password, password)
-
         const user = await Repo.createUser(name, password)
-        const token = await createJwtToken(user)
+        const token = await user.getSignedJwtToken()
         redirectToFeed(res, 200, token)
     } catch (err) {
         console.log(err)
@@ -63,9 +61,6 @@ router.post('/', async (req, res) => {
     }
 })
 
-async function createJwtToken(user) {
-    return await user.getSignedJwtToken()
-}
 
 function redirectToFeed(res, statuscode, token) {
     let options = {
@@ -81,12 +76,6 @@ function redirectToFeed(res, statuscode, token) {
     res
         .cookie('token', token, options)
         .redirect('http://localhost:5000')
-        .status(statuscode)
-}
-
-async function encrypt(password) {
-    const salt = await bcrypt.genSalt(10)
-    return bcrypt.hash(password, salt)
 }
 
 async function comparePassword(password1, password2) {
