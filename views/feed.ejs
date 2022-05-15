@@ -66,8 +66,11 @@
                 <button class="delete-post-btn">x</button>
             <% } %> 
 
-            <p class="post-text"><%- post.text %></p> 
-            <p class="post-author mb-4 mt-2"><%- post.user.name %></p>
+            <p class="post-timestamp"><%- post.creationDateString %></p>
+
+            <p class="post-text my-2"><%- post.text %></p> 
+
+            <p class="post-author mb-4"><%- post.user.name %></p>
 
             <div class="comment-form">
                 <input type="text" class="comment-field" placeholder="Add comment…">

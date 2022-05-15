@@ -72,6 +72,12 @@ p {
     border: none;
 }
 
+.post-container .post-timestamp {
+    opacity: 0.25;
+    font-weight: normal;
+    font-size: 14px;
+}
+
 .post-message {
     font-size: 18px;
 }
