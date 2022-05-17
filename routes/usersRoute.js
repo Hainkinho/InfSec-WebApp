@@ -65,14 +65,20 @@ router.post('/', async (req, res) => {
 router.patch('/update-password', protect, async (req, res) => {
     try {
         const user = req.user
-        const curPassword = req.body.curPassword
-        const newPassword = req.body.newPassword
-        const newPassword2 = req.body.newPassword2
+        const curPassword = req.query.password
+        const newPassword = req.query.newPassword
+        const newPassword2 = req.query.newPassword2
 
-        // NOTE: Here is a vulnerability (Broken-Acces-Control ... Cross-Site Request Forgery)
-        // we only check if the curPassword matches the old one. But if the user does not provide a curPassword in the request, then this check doesn't happen!
+        console.log(curPassword, newPassword, newPassword2)
 
-        if (curPassword) {
+        if (!curPassword || curPassword == '') {
+            res.status(401).json({ error: 'No password sent' })
+        }
+
+        // NOTE: Here is a vulnerability (Broken-Acces-Control ... Cross-Site Request Forgery & Paramter Pollution)
+        // we only check whether the curPassword matches the old one if the curPassword is from type string. But what happens if the curPassword is from another type? For example if we pass multiple curPassword values, then express combines them in an array and thus the comparison wouldn't happen.
+
+        if (typeof curPassword == 'string') {
             const match = await comparePassword(curPassword, user.password)
             if (!match) {
                 res.status(401).json({ error: 'password does not match with current password' })
