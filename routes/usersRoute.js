@@ -35,6 +35,7 @@ router.post('/login', async (req, res) => {
         res.status(404).json({})
     } catch (err) {
         console.log(err)
+        res.status(400).json({})
     }
 })
 
@@ -99,6 +100,18 @@ router.patch('/update-password', protect, async (req, res) => {
         await Repo.updatePassword(user, newPassword)
         res.status(200).json({ success: true })
     } catch (err) {
+        console.log(err)
+        res.status(400).json({})
+    }
+})
+
+router.get('/whoami', protect, async (req, res) => {
+    try {
+        if (req.user) {
+            res.status(200).json(req.user)
+        }
+        res.status(400).json({ error: 'User not found'})
+    } catch(err) {
         console.log(err)
         res.status(400).json({})
     }
