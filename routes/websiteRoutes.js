@@ -6,6 +6,7 @@ const Comment = require('../models/comment');
 const User = require('../models/user')
 const DataMapper = require('../dataMapper')
 const sanitize = require('../sanitizer')
+const CSRFTokenValidator = require('../CSRFValidator')
 
 const { protect, adminOnlyProtect } = require('../middleware/auth')
 
@@ -36,6 +37,17 @@ router.get('/', protect, async (req, res) => {
             const posts = await Post.find()
             sendFeed(res, posts, user.name, null)
         }
+    } catch (err) {
+        console.log(err)
+        res.status(404).json({})
+    }
+})
+
+// Reset Password
+router.get('/reset-password', protect, async (req, res) => {
+    try {
+        const id = CSRFTokenValidator.generateID();
+        res.render('reset-password', { id: id})
     } catch (err) {
         console.log(err)
         res.status(404).json({})

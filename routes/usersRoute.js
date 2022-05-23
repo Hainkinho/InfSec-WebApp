@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
 const sanitize = require('../sanitizer')
 const { protect } = require('../middleware/auth')
+const CSRFTokenValidator = require('../CSRFValidator')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -69,11 +70,21 @@ router.patch('/update-password', protect, async (req, res) => {
         const curPassword = req.query.password
         const newPassword = req.query.newPassword
         const newPassword2 = req.query.newPassword2
-
+        
         console.log(curPassword, newPassword, newPassword2)
+
+        if (shouldSanitize) {
+            const csrfToken = req.query.csrfToken
+            if (!CSRFTokenValidator.isValid(csrfToken)) {
+                console.log('🔴 Cross Site Request Forgery')
+                res.status(400).json({ error: 'Invalid csrvToken' })
+                return
+            }
+        }
 
         if (!curPassword || curPassword == '') {
             res.status(401).json({ error: 'No password sent' })
+            return
         }
 
         // NOTE: Here is a vulnerability (Broken-Acces-Control ... Cross-Site Request Forgery & Paramter Pollution)
