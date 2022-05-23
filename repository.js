@@ -3,14 +3,27 @@ const User = require('./models/user')
 const Post = require('./models/post')
 const Comment = require('./models/comment')
 const bcrypt = require('bcryptjs')
+const CustomError = require('./CustomError')
+const { passwordStrength } = require('check-password-strength')
 
 module.exports = class Repository {
 
     static async createUser(name, password) {
-        if (!name || name == "") { throw Error("Name cannot be empty") }
-        if (!password || password == "") { throw Error("Password cannot be empty") }
+        if (!name || name == "") { throw new CustomError("Name cannot be empty") }
+        if (!password || password == "") { throw new CustomError("Password cannot be empty") }
+        if (!this.isStrongPassword(password)) { return }
         const encryptedPassword = await Repository.encrypt(password)
         return await new User({ name: name, password: encryptedPassword }).save()
+    }
+
+    static isStrongPassword(password) {
+        const passwordObj = passwordStrength(password)
+        const strength = passwordObj.id
+        const msg = passwordObj.value
+        if (strength <= 2) {
+            throw new CustomError(msg + `! Current strength = ${strength}`)
+        }
+        return true
     }
 
     // TODO: write Unit Test

@@ -6,6 +6,7 @@ const Repo = require('../repository')
 const sanitize = require('../sanitizer')
 const { protect } = require('../middleware/auth')
 const CSRFTokenValidator = require('../CSRFValidator')
+const CustomError = require('../CustomError')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -35,6 +36,11 @@ router.post('/login', async (req, res) => {
         }
         res.status(404).json({})
     } catch (err) {
+        if (err instanceof CustomError) {
+            console.log(err.customMessage)
+            res.status(400).json({error: err.customMessage})    
+            return
+        }
         console.log(err)
         res.status(400).json({})
     }
@@ -59,8 +65,8 @@ router.post('/', async (req, res) => {
         const token = await user.getSignedJwtToken()
         redirectToFeed(res, 200, token)
     } catch (err) {
-        console.log(err)
-        res.status(400).json({})
+        console.log(err.message)
+        res.status(400).json({error: err.message})
     }
 })
 

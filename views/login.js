@@ -64,7 +64,9 @@ registerBtn.addEventListener('click', async e => {
     if (res.redirected) {
         window.location.href = res.url
     } else {
-        showError("Name and password don't match. Please try again...")
+        const json = await res.json()
+        const errMessage = json.error
+        showError(errMessage)
     }
 })
 
