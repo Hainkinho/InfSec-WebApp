@@ -2,6 +2,17 @@ const User = require('./models/user')
 const Comment = require('./models/comment')
 
 module.exports = class DataMapper {
+
+    static async mapPostsRelationsToObjArray(posts) {
+        if (!posts) { return [] }
+        let postsRes = []
+        for (const i in posts) {
+            const res = await this.mapPostRelationsToObj(posts[i])
+            postsRes.push(res)
+        }
+        return postsRes
+    }
+
     static async mapPostRelationsToObj(post) {
         let postRes = post.toObject()
         const user = await User.findById(post.userID)

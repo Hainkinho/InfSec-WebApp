@@ -72,7 +72,7 @@ async function sendFeed(res, posts, username, query, canEdit = false) {
         const bDate = new Date(b.createdAt)
         return bDate - aDate
     })
-    const postsRes = await mapPostsRelationsToObjArray(posts)
+    const postsRes = await DataMapper.mapPostsRelationsToObjArray(posts)
     res.render('feed', { username: username, query: query, posts: postsRes, canEdit: canEdit })
 }
 
@@ -92,15 +92,6 @@ async function getFilteredPosts(query) {
         }
     }
     return res
-}
-
-async function mapPostsRelationsToObjArray(posts) {
-    let postsRes = []
-    for (const i in posts) {
-        const res = await DataMapper.mapPostRelationsToObj(posts[i])
-        postsRes.push(res)
-    }
-    return postsRes
 }
 
 
