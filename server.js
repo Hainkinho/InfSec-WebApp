@@ -2,11 +2,14 @@ const express = require('express')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const rateLimit = require('express-rate-limit')
 const connectDB = require('./config/db')
 
 dotenv.config({ path: './config/config.env'})
 
 connectDB()
+
+const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
 const app = express()
 
@@ -24,6 +27,17 @@ app.use(logger)
 
 const dbLogger = require('./middleware/dbLogger')
 app.use(dbLogger)
+
+if (shouldSanitize) {
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    })
+    app.use(limiter)
+    // Code from: https://www.npmjs.com/package/express-rate-limit
+
+    
+}
 
 const websiteRoutes = require('./routes/websiteRoutes')
 app.use('', websiteRoutes)
