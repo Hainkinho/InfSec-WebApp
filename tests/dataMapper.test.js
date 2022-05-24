@@ -24,7 +24,7 @@ afterAll(async () => {
 
 
 test('test mapPostRelationsToObj', async () => {
-    const user = await Repo.createUser("a name", "test")
+    const user = await Repo.createUser("a name", "helloWORLD123!")
     const post = await Repo.createPost(user, "A Post")
     const comment = await Repo.createCommentForPost(post, user, "A Comment")
 

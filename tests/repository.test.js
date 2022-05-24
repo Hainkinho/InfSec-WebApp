@@ -70,15 +70,21 @@ describe("Create User", () => {
     })
     
     test('Test create User', async () => {
-        await Repo.createUser("flo", "123")
+        await Repo.createUser("flo", "helloWORLD123!")
         const users = await User.find()
         expect(users.length).toBe(1)
     })
     
     test('Test create another User', async () => {
-        await Repo.createUser("simon", "test")
+        await Repo.createUser("simon", "helloWORLD123!")
         const users = await User.find()
         expect(users.length).toBe(1)
+    })
+
+    test('Test create User with weak password', async () => {
+        await expect(
+            Repo.createUser("bob", "123")
+        ).rejects.toThrow()
     })
 })
 
@@ -175,7 +181,7 @@ test('Test delete post', async () => {
 // MARK: - Helpers
 
 const getTestUser = async () => {
-    return await Repo.createUser("test", "123")
+    return await Repo.createUser("test", "helloWORLD123!")
 }
 
 const getTestPostAndUser = async () => {
