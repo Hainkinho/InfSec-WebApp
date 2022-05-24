@@ -1,12 +1,12 @@
 {
-  "name": "pi-server-v2",
+  "name": "InfSec-Server-Project",
   "version": "1.0.0",
-  "description": "Raspberry PI API Server",
+  "description": "Uni Project to show off Web Server vulnerabilities like Injections or XSS attacks",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=production node server",
-    "sanstart": "NODE_ENV=sanitized node server",
-    "sandev": "NODE_ENV=sanitized nodemon server",
+    "start": "cross-env NODE_ENV=production node server",
+    "sanstart": "cross-env NODE_ENV=sanitized node server",
+    "sandev": "cross-env NODE_ENV=sanitized nodemon server",
     "dev": "nodemon server",
     "test": "jest --forceExit"
   },
@@ -18,6 +18,7 @@
     "check-password-strength": "^2.0.5",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.0",
     "ejs": "^3.1.7",
     "express": "^4.17.3",
