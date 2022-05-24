@@ -44,20 +44,20 @@ module.exports = class DataMapper {
             return `Today - ${hours}:${mins}`
         }
 
-        const day = date.getDay()
-        const month = date.getMonth()
+        const day = date.getDate()
+        const month = date.getMonth() + 1
         const year = date.getFullYear()
         return `${day}.${month}.${year} - ${hours}:${mins}`
     }
 
     static isToday(date) {
         const now = new Date()
-        return date.getDay() == now.getDay() && 
+        return date.getDate() == now.getDate() && 
             date.getMonth() == now.getMonth() &&
             date.getFullYear() == now.getFullYear()
     }
 
     static convertToTwoDigits(num) {
-        return num < 9 ? `0${num}` : num
+        return num < 10 ? `0${num}` : num
     }
 }
