@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
-const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
 const sanitize = require('../sanitizer')
 const { protect } = require('../middleware/auth')
 const CSRFTokenValidator = require('../CSRFValidator')
 const CustomError = require('../CustomError')
+const Repository = require('../repository')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -16,25 +16,19 @@ router.post('/login', async (req, res) => {
         let name = req.body.name
         const password = req.body.password
 
-        console.log(name, password)
+        console.log('Name:', name, ',password: ', password)
 
         if (shouldSanitize) {
             name = sanitize(name)
         }
-        
-        // Approach so that we can show an Injections
-        const users = await User.find({ name: name })
-        
-        for (const i in users) {
-            const user = users[i]
-            const match = await comparePassword(password, user.password)
-            if (match) {
-                const token = await user.getSignedJwtToken()
-                redirectToFeed(res, 200, token)
-                return    
-            }
+
+        const user = await Repository.getUser(name, password)
+        if(!user) {
+            res.status(404).json({ error: 'User not found!'})
+            return 
         }
-        res.status(404).json({})
+        const token = await user.getSignedJwtToken()
+        redirectToFeed(res, 200, token)
     } catch (err) {
         if (err instanceof CustomError) {
             console.log(err.customMessage)
@@ -97,7 +91,8 @@ router.patch('/update-password', protect, async (req, res) => {
         // we only check whether the curPassword matches the old one if the curPassword is from type string. But what happens if the curPassword is from another type? For example if we pass multiple curPassword values, then express combines them in an array and thus the comparison wouldn't happen.
 
         if (typeof curPassword == 'string') {
-            const match = await comparePassword(curPassword, user.password)
+            // const match = await comparePassword(curPassword, user.password)
+            const match = await user.hasPassword(curPassword)
             if (!match) {
                 res.status(401).json({ error: 'password does not match with current password' })
                 return
@@ -126,6 +121,7 @@ router.get('/whoami', protect, async (req, res) => {
     try {
         if (req.user) {
             res.status(200).json(req.user)
+            return
         }
         res.status(400).json({ error: 'User not found'})
     } catch(err) {
@@ -149,10 +145,6 @@ function redirectToFeed(res, statuscode, token) {
     res
         .cookie('token', token, options)
         .redirect('http://localhost:5000')
-}
-
-async function comparePassword(password1, password2) {
-    return await bcrypt.compare(password1, password2)
 }
 
 

@@ -8,11 +8,28 @@ const { passwordStrength } = require('check-password-strength')
 
 module.exports = class Repository {
 
+    static async getUser(name, password) {
+        if (!name || name == "") { throw new CustomError("Name cannot be empty") }
+        if (!password || password == "") { throw new CustomError("Password cannot be empty") }
+
+        // Approach so that we can show an Injections
+        const users = await User.find({ name: name })
+        
+        for (const i in users) {
+            const user = users[i]
+            const match = await user.hasPassword(password)
+            if (match) {
+                return user
+            }
+        }
+        return null
+    }
+
     static async createUser(name, password) {
         if (!name || name == "") { throw new CustomError("Name cannot be empty") }
         if (!password || password == "") { throw new CustomError("Password cannot be empty") }
         if (!this.isStrongPassword(password)) { return }
-        const encryptedPassword = await Repository.encrypt(password)
+        const encryptedPassword = await this.encrypt(password)
         return await new User({ name: name, password: encryptedPassword }).save()
     }
 
@@ -28,12 +45,11 @@ module.exports = class Repository {
 
     // TODO: write Unit Test
     static async updatePassword(user, newPassword) {
-        const encryptedPassword = await Repository.encrypt(newPassword)
+        const encryptedPassword = await this.encrypt(newPassword)
         user.password = encryptedPassword
         await user.save()
     }
 
-    // TODO: Move methode to another class - maybe inside user as a static methode
     static async encrypt(password) {
         const salt = await bcrypt.genSalt(10)
         return bcrypt.hash(password, salt)
