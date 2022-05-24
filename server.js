@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const rateLimit = require('express-rate-limit')
 const errorHandler = require('./middleware/errorHandler')
+const paramSanitizer = require('./middleware/sanitizer')
 const connectDB = require('./config/db')
 
 dotenv.config({ path: './config/config.env'})
@@ -29,6 +30,8 @@ app.use(logger)
 
 const dbLogger = require('./middleware/dbLogger')
 app.use(dbLogger)
+
+app.use(paramSanitizer)
 
 if (shouldSanitize) {
     const limiter = rateLimit({
