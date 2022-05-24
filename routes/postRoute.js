@@ -49,7 +49,13 @@ router.post('/comment', protect, async (req, res) => {
     }
 })
 
-router.delete('/', adminOnlyProtect, async (req, res) => {
+if (shouldSanitize) {
+    router.delete('/', adminOnlyProtect, deletePostEndpoint)
+} else {
+    router.delete('/', protect, deletePostEndpoint)
+}
+
+async function deletePostEndpoint(req, res) {
     try {
         const postID = req.body.postID
 
@@ -65,7 +71,7 @@ router.delete('/', adminOnlyProtect, async (req, res) => {
         console.log(err)
         res.status(400).json({})
     }
-})
+}
 
 
 router.delete('/comment', adminOnlyProtect, async (req, res) => {

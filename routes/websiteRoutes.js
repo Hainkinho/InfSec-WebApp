@@ -54,8 +54,14 @@ router.get('/reset-password', protect, async (req, res) => {
     }
 })
 
-// admin-only edit page
-router.get('/edit', adminOnlyProtect, async (req, res) => {
+
+if (shouldSanitize) {
+    router.get('/edit', adminOnlyProtect, editWebsiteEndpointMethod)
+} else {
+    router.get('/edit', protect, editWebsiteEndpointMethod)
+}
+
+async function editWebsiteEndpointMethod(req, res) {
     try {
         const user = req.user
         const posts = await Post.find()
@@ -64,7 +70,7 @@ router.get('/edit', adminOnlyProtect, async (req, res) => {
     } catch (err) {
         console.log(err)
     }
-})
+}
 
 async function sendFeed(res, posts, username, query, canEdit = false) {
     posts.sort((a,b) => { 
