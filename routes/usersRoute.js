@@ -91,7 +91,6 @@ router.patch('/update-password', protect, async (req, res) => {
         // we only check whether the curPassword matches the old one if the curPassword is from type string. But what happens if the curPassword is from another type? For example if we pass multiple curPassword values, then express combines them in an array and thus the comparison wouldn't happen.
 
         if (typeof curPassword == 'string') {
-            // const match = await comparePassword(curPassword, user.password)
             const match = await user.hasPassword(curPassword)
             if (!match) {
                 res.status(401).json({ error: 'password does not match with current password' })
