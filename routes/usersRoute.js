@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
 const Repo = require('../repository')
-const sanitize = require('../sanitizer')
 const { protect } = require('../middleware/auth')
 const CSRFTokenValidator = require('../CSRFValidator')
 const CustomError = require('../CustomError')
@@ -15,12 +14,7 @@ router.post('/login', async (req, res, next) => {
     try {
         let name = req.body.name
         const password = req.body.password
-
         console.log('Name:', name, ',password: ', password)
-
-        if (shouldSanitize) {
-            name = sanitize(name)
-        }
 
         const user = await Repository.getUser(name, password)
         if(!user) {
@@ -48,10 +42,6 @@ router.post('/', async (req, res) => {
     try {
         let name = req.body.name
         const password = req.body.password
-
-        if (shouldSanitize) {
-            name = sanitize(name)
-        }
 
         const user = await Repo.createUser(name, password)
         const token = await user.getSignedJwtToken()

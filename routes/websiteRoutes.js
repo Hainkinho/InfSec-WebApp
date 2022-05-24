@@ -5,7 +5,6 @@ const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user')
 const DataMapper = require('../dataMapper')
-const sanitize = require('../sanitizer')
 const CSRFTokenValidator = require('../CSRFValidator')
 
 const { protect, adminOnlyProtect } = require('../middleware/auth')
@@ -27,11 +26,6 @@ router.get('/', protect, async (req, res, next) => {
     try {
         let query = req.query.query
         const user = req.user
-
-        if (shouldSanitize) {
-            query = sanitize(query)
-        }
-
         console.log("Query:", query)
 
         if (query) {

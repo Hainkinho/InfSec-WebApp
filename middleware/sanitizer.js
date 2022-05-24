@@ -1,5 +1,4 @@
 const sanitizeSql = require('mongo-sanitize')
-const { sanitize } = require('express-xss-sanitizer');
 var xss = require("xss");
 
 const paramSanitizer = (req, res, next) => {

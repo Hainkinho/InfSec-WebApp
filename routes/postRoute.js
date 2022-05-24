@@ -7,7 +7,6 @@ const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
 const CustomError = require('../CustomError')
 const { protect, adminOnlyProtect } = require('../middleware/auth')
-const sanitize = require('../sanitizer')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -15,10 +14,6 @@ router.post('/', protect, async (req, res, next) => {
     try {
         const user = req.user
         let text = req.body.text
-
-        if (shouldSanitize) {
-            text = sanitize(text)
-        }
 
         const post = await Repo.createPost(user, text)
 
@@ -33,11 +28,6 @@ router.post('/comment', protect, async (req, res, next) => {
         const postID = req.body.postID
         const user = req.user
         let text = req.body.text
-
-        if (shouldSanitize) {
-            text = sanitize(text)
-        }
-
         console.log(postID, user.id, text)
 
         const post = await Post.findById(postID)
