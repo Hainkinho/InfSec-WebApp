@@ -6,6 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node server",
     "sanstart": "NODE_ENV=sanitized node server",
+    "sandev": "NODE_ENV=sanitized nodemon server",
     "dev": "nodemon server",
     "test": "jest --forceExit"
   },
