@@ -10,8 +10,6 @@ dotenv.config({ path: './config/config.env'})
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    // useCreateIndex: true,
-    // useFindAndModify: false,
     useUnifiedTopology: true
 })
 
@@ -26,6 +24,7 @@ const addData = async () => {
     const carlitoLove = await Repo.createUser("carlito_love", "test")
     const taylor_swift = await Repo.createUser("taylor_swift", "love")
     const buddha_knows = await Repo.createUser("buddha_knows", "test")
+    const sonGoku = await Repo.createUser("SonGoku", "test")
     const flo = await Repo.createUser("flo", "test")
     const natalie = await Repo.createUser("natalie", "test")
     const joachim = await Repo.createUser("joachim", "test")
@@ -40,8 +39,21 @@ const addData = async () => {
 
     const post4 = await Repo.createPost(carlitoLove, "What happens bevor you were born. Are things fake or are they tru? The true you doesn't even exist yet - so maybe everything is fake, or maybe everything is the most true and being alive is fake. Maybe it is fake and true at the same time. - fake you, stay tru")
 
-    await Repo.createCommentForPost(post1, carlitoLove, 'Couldn\'t say it any better')
-    await Repo.createCommentForPost(post1, taylor_swift, 'Thanks Carlo')
+    await Repo.createCommentForPost(post1, buddha_knows, 'Couldn\'t say it any better')
+    await Repo.createCommentForPost(post1, taylor_swift, 'Thank You')
+
+    const post5 = await Repo.createPost(carlitoLove, "10419")
+    await Repo.createCommentForPost(post5, sonGoku, 'Tag 10419, lieg im bett und check voicemails')
+    await Repo.createCommentForPost(post5, buddha_knows, 'Nala kann schon reden, wie die jahre doch vergehn, sie will wissen wo ich heute bin')
+    await Repo.createCommentForPost(post5, taylor_swift, 'Single grade keine Freundin, alexa spiel mir Jocelyn')
+    await Repo.createCommentForPost(post5, admin, 'Immer da wo meine boys sind, im studio und trinken bisschen Henny wie mit 19')
+    await Repo.createCommentForPost(post5, sonGoku, 'Yeah, sie wolln wissen wie es schmeckt, ich sag komm und setzt dich neben mich die tischen sind gedeckt')
+    await Repo.createCommentForPost(post5, flo, 'Ich will nie wieder friern, ich hab pilze im gepäck und sobald es kalt wird buch ich mir ein ticket und bin weg')
+    await Repo.createCommentForPost(post5, carlitoLove, 'ich pack die fam in mein spaceship. Wir fliegen hoch wo es hingeht weiß man nicht')
+
+    const post6 = await Repo.createPost(joachim, "Sheeesh, was ein cooler server")
+    const post7 = await Repo.createPost(natalie, "Hi ich bin endlich drinnen")
+    const post8 = await Repo.createPost(natalie, "ich mag IT security")
 
     process.exit()
 }
