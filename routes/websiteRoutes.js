@@ -12,14 +12,18 @@ const { protect, adminOnlyProtect } = require('../middleware/auth')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
-router.get('/login', async (req, res) => {
-    const pathToFile = path.join(__dirname, '../views', 'login.html')
-    res.sendFile(pathToFile)
+router.get('/login', async (req, res, next) => {
+    try {
+        const pathToFile = path.join(__dirname, '../views', 'login.html')
+        res.sendFile(pathToFile)   
+    } catch (error) {
+        next(err)
+    }
 })
 
 
 // Feed
-router.get('/', protect, async (req, res) => {
+router.get('/', protect, async (req, res, next) => {
     try {
         let query = req.query.query
         const user = req.user
@@ -38,19 +42,17 @@ router.get('/', protect, async (req, res) => {
             sendFeed(res, posts, user.name, null)
         }
     } catch (err) {
-        console.log(err)
-        res.status(404).json({})
+        next(err)
     }
 })
 
 // Reset Password
-router.get('/reset-password', protect, async (req, res) => {
+router.get('/reset-password', protect, async (req, res, next) => {
     try {
         const id = CSRFTokenValidator.generateID();
         res.render('reset-password', { id: id})
     } catch (err) {
-        console.log(err)
-        res.status(404).json({})
+        next(err)
     }
 })
 
@@ -61,14 +63,14 @@ if (shouldSanitize) {
     router.get('/edit', protect, editWebsiteEndpointMethod)
 }
 
-async function editWebsiteEndpointMethod(req, res) {
+async function editWebsiteEndpointMethod(req, res, next) {
     try {
         const user = req.user
         const posts = await Post.find()
         const canEdit = true
         sendFeed(res, posts, user.name, null, canEdit)
     } catch (err) {
-        console.log(err)
+        next(err)
     }
 }
 

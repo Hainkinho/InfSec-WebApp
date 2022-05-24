@@ -5,12 +5,13 @@ const Post = require('../models/post')
 const Comment = require('../models/comment')
 const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
+const CustomError = require('../CustomError')
 const { protect, adminOnlyProtect } = require('../middleware/auth')
 const sanitize = require('../sanitizer')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, async (req, res, next) => {
     try {
         const user = req.user
         let text = req.body.text
@@ -23,11 +24,11 @@ router.post('/', protect, async (req, res) => {
 
         res.status(200).json(post)
     } catch (err) {
-        console.log(err)
+        next(err)
     }
 })
 
-router.post('/comment', protect, async (req, res) => {
+router.post('/comment', protect, async (req, res, next) => {
     try {
         const postID = req.body.postID
         const user = req.user
@@ -40,12 +41,14 @@ router.post('/comment', protect, async (req, res) => {
         console.log(postID, user.id, text)
 
         const post = await Post.findById(postID)
+        if (!post) {
+            throw new CustomError(`No Post found with id: ${postID}!`)
+        }
         const comment = await Repo.createCommentForPost(post, user, text)
 
         res.status(200).json(post)
     } catch (err) {
-        console.log(err)
-        res.status(400).json({})
+        next(err)
     }
 })
 
@@ -55,7 +58,7 @@ if (shouldSanitize) {
     router.delete('/', protect, deletePostEndpoint)
 }
 
-async function deletePostEndpoint(req, res) {
+async function deletePostEndpoint(req, res, next) {
     try {
         const postID = req.body.postID
 
@@ -68,13 +71,12 @@ async function deletePostEndpoint(req, res) {
 
         res.status(200).json({ success: true})
     } catch (err) {
-        console.log(err)
-        res.status(400).json({})
+        next(err)
     }
 }
 
 
-router.delete('/comment', adminOnlyProtect, async (req, res) => {
+router.delete('/comment', adminOnlyProtect, async (req, res, next) => {
     try {
         const postID = req.body.postID
         const commentID = req.body.commentID
@@ -91,8 +93,7 @@ router.delete('/comment', adminOnlyProtect, async (req, res) => {
 
         res.status(200).json({ success: true})
     } catch (err) {
-        console.log(err)
-        res.status(400).json({})
+        next(err)
     }
 })
 

@@ -11,7 +11,7 @@ const Repository = require('../repository')
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
     try {
         let name = req.body.name
         const password = req.body.password
@@ -24,25 +24,23 @@ router.post('/login', async (req, res) => {
 
         const user = await Repository.getUser(name, password)
         if(!user) {
-            res.status(404).json({ error: 'User not found!'})
+            next(new CustomError(404, 'User not found!'))
             return 
         }
         const token = await user.getSignedJwtToken()
         redirectToFeed(res, 200, token)
     } catch (err) {
-        if (err instanceof CustomError) {
-            console.log(err.customMessage)
-            res.status(400).json({error: err.customMessage})    
-            return
-        }
-        console.log(err)
-        res.status(400).json({})
+        next(err)
     }
 })
 
 // Logout
-router.get('/logout', async (req, res) => {
-    res.clearCookie("token").redirect('http://localhost:5000/login');
+router.get('/logout', async (req, res, next) => {
+    try {
+        res.clearCookie("token").redirect('http://localhost:5000/login');
+    } catch (err) {
+        next(err)
+    }
 })
 
 // Register
@@ -59,8 +57,7 @@ router.post('/', async (req, res) => {
         const token = await user.getSignedJwtToken()
         redirectToFeed(res, 200, token)
     } catch (err) {
-        console.log(err.message)
-        res.status(400).json({error: err.message})
+        next(err)
     }
 })
 
@@ -111,8 +108,7 @@ router.patch('/update-password', protect, async (req, res) => {
         await Repo.updatePassword(user, newPassword)
         res.status(200).json({ success: true })
     } catch (err) {
-        console.log(err)
-        res.status(400).json({})
+        next(err)
     }
 })
 
@@ -124,8 +120,7 @@ router.get('/whoami', protect, async (req, res) => {
         }
         res.status(400).json({ error: 'User not found'})
     } catch(err) {
-        console.log(err)
-        res.status(400).json({})
+        next(err)
     }
 })
 

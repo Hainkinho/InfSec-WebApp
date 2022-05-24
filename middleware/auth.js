@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const CustomError = require('../CustomError')
 const User = require('../models/user')
 
 const userProtect = async function(req, res, next) {
@@ -32,7 +33,7 @@ function redirectToLoginPage(res) {
 exports.adminOnlyProtect = async function(req, res, next) {
     userProtect(req, res, () => {
         if (!req.user.isAdmin()) {
-            res.status(401).json({ error: 'Admin only page' })
+            next(new CustomError(401, 'Admin only'))
             return
         }
         next()

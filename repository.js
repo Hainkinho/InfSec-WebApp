@@ -9,8 +9,8 @@ const { passwordStrength } = require('check-password-strength')
 module.exports = class Repository {
 
     static async getUser(name, password) {
-        if (!name || name == "") { throw new CustomError("Name cannot be empty") }
-        if (!password || password == "") { throw new CustomError("Password cannot be empty") }
+        if (!name || name == "") { throw new CustomError(400, "Name cannot be empty") }
+        if (!password || password == "") { throw new CustomError(400, "Password cannot be empty") }
 
         // Approach so that we can show an Injections
         const users = await User.find({ name: name })
@@ -26,8 +26,8 @@ module.exports = class Repository {
     }
 
     static async createUser(name, password) {
-        if (!name || name == "") { throw new CustomError("Name cannot be empty") }
-        if (!password || password == "") { throw new CustomError("Password cannot be empty") }
+        if (!name || name == "") { throw new CustomError(400, "Name cannot be empty") }
+        if (!password || password == "") { throw new CustomError(400, "Password cannot be empty") }
         if (!this.isStrongPassword(password)) { return }
         const encryptedPassword = await this.encrypt(password)
         return await new User({ name: name, password: encryptedPassword }).save()
@@ -38,7 +38,7 @@ module.exports = class Repository {
         const strength = passwordObj.id
         const msg = passwordObj.value
         if (strength <= 2) {
-            throw new CustomError(msg + `! Current strength = ${strength}`)
+            throw new CustomError(400, `${msg}! Current strength = ${strength}`)
         }
         return true
     }
@@ -56,8 +56,8 @@ module.exports = class Repository {
     }
 
     static async createPost(user, text) {
-        if (!user) { throw Error("user is undefined") }
-        if (!text || text == "") { throw Error("text is invalid") }
+        if (!user) { throw new CustomError(500, "user is undefined") }
+        if (!text || text == "") { throw new CustomError(400, "text is invalid") }
         return await new Post({ 
             userID: user.id, 
             text: text,
@@ -66,9 +66,9 @@ module.exports = class Repository {
     }
 
     static async createCommentForPost(post, user, text) {
-        if (!post) { throw Error('post is not defined') }
-        if (!user) { throw Error('user is not defined') }
-        if (!text || text == "") { throw Error('text is invalid') }
+        if (!post) { throw new CustomError(500, 'post is not defined') }
+        if (!user) { throw new CustomError(500, 'user is not defined') }
+        if (!text || text == "") { throw CustomError(400, 'text is invalid') }
         const comment = await new Comment({ userID: user.id, text: text }).save()
         post.comments.push(comment)
         await post.save()
@@ -76,7 +76,7 @@ module.exports = class Repository {
     }
 
     static async deletePost(post) {
-        if (!post) { throw Error("post is not defined") }
+        if (!post) { throw new CustomError(500, "post is not defined") }
         
         for (const i in post.comments) {
             const commentID = post.comments[i]
@@ -86,8 +86,8 @@ module.exports = class Repository {
     }
 
     static async deleteCommentFromPost(comment, post) {
-        if (!comment) { throw Error("comment is not defined") }
-        if (!post) { throw Error("post is not defined") }
+        if (!comment) { throw new CustomError(500, "comment is not defined") }
+        if (!post) { throw new CustomError(500, "post is not defined") }
         const commentID = comment.id
         await Comment.findByIdAndDelete(commentID)
         post.comments = post.comments.filter(id => { id != commentID })
