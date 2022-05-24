@@ -36,9 +36,11 @@ if (shouldSanitize) {
     app.use(limiter)
     // Code from: https://www.npmjs.com/package/express-rate-limit
 
-    
+    const paramPollutionPreventer = require('./middleware/paramPollutionPreventer')
+    app.use(paramPollutionPreventer)
 }
 
+// MARK: - Setup routes
 const websiteRoutes = require('./routes/websiteRoutes')
 app.use('', websiteRoutes)
 

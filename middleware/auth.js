@@ -6,7 +6,7 @@ const userProtect = async function(req, res, next) {
 
     if (!token) {
         console.log("No Token provided in cookies")
-        redirectToLoginPage(res, "Cannot access feed when not logged in!")
+        redirectToLoginPage(res)
         return
     }
 
@@ -14,17 +14,19 @@ const userProtect = async function(req, res, next) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         req.user = await User.findById(decoded.id)
         if (!req.user) {
-            redirectToLoginPage(res, "Couldn't find user!")
+            console.log("No user found from jwtToken")
+            redirectToLoginPage(res)
             return
         }
         next()
     } catch (error) {
-        redirectToLoginPage(res, "Couldn't verfiy token!")
+        console.log("Couldn't verfiy token!")
+        redirectToLoginPage(res)
     }
 }
 
-function redirectToLoginPage(res, errorMessage) {
-    res.redirect('http://localhost:5000/login').json({error: errorMessage})
+function redirectToLoginPage(res) {
+    res.redirect('http://localhost:5000/login')
 }
 
 exports.adminOnlyProtect = async function(req, res, next) {
