@@ -1,6 +1,8 @@
 const User = require('./models/user')
 const Comment = require('./models/comment')
 
+const shouldSanitize = process.env.NODE_ENV == "sanitized"
+
 module.exports = class DataMapper {
 
     static async mapPostsRelationsToObjArray(posts) {
@@ -16,7 +18,7 @@ module.exports = class DataMapper {
     static async mapPostRelationsToObj(post) {
         let postRes = post.toObject()
         const user = await User.findById(post.userID)
-        postRes.user = user.toObject()
+        postRes.user = shouldSanitize ? user.toSanitizedObject() : user.toObject()
         const formattedCreationDateString = DataMapper.formatTime(post.createdAt)
         postRes.creationDateString = formattedCreationDateString
     
@@ -27,7 +29,7 @@ module.exports = class DataMapper {
             if (!comment) { continue }
             const commentUser = await User.findById(comment.userID)
             let commentObj = comment.toObject()
-            commentObj.user = commentUser.toObject()
+            commentObj.user = shouldSanitize ? commentUser.toSanitizedObject() : commentUser.toObject()
             comments.push(commentObj)
         }
     

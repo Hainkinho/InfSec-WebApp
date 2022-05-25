@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
 const CustomError = require('../CustomError')
 const { protect, adminOnlyProtect } = require('../middleware/auth')
+const DataMapper = require('../dataMapper')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -17,7 +18,8 @@ router.post('/', protect, async (req, res, next) => {
 
         const post = await Repo.createPost(user, text)
 
-        res.status(200).json(post)
+        const postRes = await DataMapper.mapPostRelationsToObj(post)
+        res.status(200).json(postRes)
     } catch (err) {
         next(err)
     }
@@ -32,11 +34,12 @@ router.post('/comment', protect, async (req, res, next) => {
 
         const post = await Post.findById(postID)
         if (!post) {
-            throw new CustomError(`No Post found with id: ${postID}!`)
+            throw new CustomError(400, `No Post found with id: ${postID}!`)
         }
         const comment = await Repo.createCommentForPost(post, user, text)
 
-        res.status(200).json(post)
+        const postRes = await DataMapper.mapPostRelationsToObj(post)
+        res.status(200).json(postRes)
     } catch (err) {
         next(err)
     }
@@ -53,7 +56,7 @@ async function deletePostEndpoint(req, res, next) {
         const postID = req.body.postID
 
         if (!postID) {
-            throw Error('postID not defined')
+            throw new CustomError(400, 'postID not defined')
         }
 
         const post = await Post.findById(postID)
@@ -72,9 +75,9 @@ router.delete('/comment', adminOnlyProtect, async (req, res, next) => {
         const commentID = req.body.commentID
 
         if (!postID) {
-            throw Error('postID not defined')
+            throw new CustomError(400, 'postID not defined')
         } else if (!commentID) {
-            throw Error('commentID not defined')
+            throw new CustomError(400, 'commentID not defined')
         }
 
         const post = await Post.findById(postID)

@@ -111,18 +111,16 @@ router.patch('/update-password', protect, async (req, res, next) => {
 
 router.get('/whoami', protect, async (req, res, next) => {
     try {
-        if (req.user) {
-            if (shouldSanitize) {
-                res.status(200).json({
-                    name: req.user.name,
-                    createdAt: req.user.createdAt,
-                })
-                return
-            }
-            res.status(200).json(req.user)
+        if (!req.user) {
+            next(new CustomError(400, 'User not found'))
             return
         }
-        next(new CustomError(400, 'User not found'))
+        
+        if (shouldSanitize) {
+            res.status(200).json(req.user.toSanitizedObject())
+            return
+        }
+        res.status(200).json(req.user)
     } catch(err) {
         next(err)
     }

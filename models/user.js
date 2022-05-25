@@ -39,5 +39,12 @@ userSchema.methods.isAdmin = function() {
     return this.role == 'admin'
 }
 
+userSchema.methods.toSanitizedObject = function() {
+    let obj = this.toObject()
+    delete obj.password
+    delete obj.role
+    return obj
+}
+
 const User = mongoose.model('User', userSchema)
 module.exports = User
