@@ -115,7 +115,7 @@ router.get('/whoami', protect, async (req, res, next) => {
             res.status(200).json(req.user)
             return
         }
-        res.status(400).json({ error: 'User not found'})
+        next(new CustomError(400, 'User not found'))
     } catch(err) {
         next(err)
     }
