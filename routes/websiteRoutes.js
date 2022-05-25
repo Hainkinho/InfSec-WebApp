@@ -30,10 +30,10 @@ router.get('/', protect, async (req, res, next) => {
 
         if (query) {
             const filteredPosts = await getFilteredPosts(query)
-            sendFeed(res, filteredPosts, user.name, query)
+            sendFeed(res, filteredPosts, user.name, user.isAdmin(), query)
         } else {  
             const posts = await Post.find()
-            sendFeed(res, posts, user.name, null)
+            sendFeed(res, posts, user.name, user.isAdmin(), null)
         }
     } catch (err) {
         next(err)
@@ -62,20 +62,20 @@ async function editWebsiteEndpointMethod(req, res, next) {
         const user = req.user
         const posts = await Post.find()
         const canEdit = true
-        sendFeed(res, posts, user.name, null, canEdit)
+        sendFeed(res, posts, user.name, user.isAdmin(), null, canEdit)
     } catch (err) {
         next(err)
     }
 }
 
-async function sendFeed(res, posts, username, query, canEdit = false) {
+async function sendFeed(res, posts, username, isAdmin, query, canEdit = false) {
     posts.sort((a,b) => { 
         const aDate = new Date(a.createdAt)
         const bDate = new Date(b.createdAt)
         return bDate - aDate
     })
     const postsRes = await DataMapper.mapPostsRelationsToObjArray(posts)
-    res.render('feed', { username: username, query: query, posts: postsRes, canEdit: canEdit })
+    res.render('feed', { username: username, query: query, posts: postsRes, canEdit: canEdit, isAdmin: isAdmin })
 }
 
 async function getFilteredPosts(query) {
