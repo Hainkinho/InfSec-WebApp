@@ -184,6 +184,11 @@ header {
     align-items: center;
 }
 
+#change-password-btn {
+    margin: 10px 0;
+    margin-left: 20px;
+}
+
 #logout-btn {
     margin: 10px 0;
     margin-left: 20px;
