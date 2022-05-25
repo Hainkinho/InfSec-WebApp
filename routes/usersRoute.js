@@ -22,7 +22,7 @@ router.post('/login', async (req, res, next) => {
             return 
         }
         const token = await user.getSignedJwtToken()
-        redirectToFeed(res, 200, token)
+        redirectToFeed(res, token)
     } catch (err) {
         next(err)
     }
@@ -52,7 +52,7 @@ router.post('/', async (req, res, next) => {
 
         const user = await Repo.createUser(name, password, role)
         const token = await user.getSignedJwtToken()
-        redirectToFeed(res, 200, token)
+        redirectToFeed(res, token)
     } catch (err) {
         next(err)
     }
@@ -112,6 +112,13 @@ router.patch('/update-password', protect, async (req, res, next) => {
 router.get('/whoami', protect, async (req, res, next) => {
     try {
         if (req.user) {
+            if (shouldSanitize) {
+                res.status(200).json({
+                    name: req.user.name,
+                    createdAt: req.user.createdAt,
+                })
+                return
+            }
             res.status(200).json(req.user)
             return
         }
@@ -122,7 +129,7 @@ router.get('/whoami', protect, async (req, res, next) => {
 })
 
 
-function redirectToFeed(res, statuscode, token) {
+function redirectToFeed(res, token) {
     let options = {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
         httpOnly: false
