@@ -38,12 +38,19 @@ router.get('/logout', async (req, res, next) => {
 })
 
 // Register
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
-        let name = req.body.name
+        const name = req.body.name
         const password = req.body.password
+        let role = req.body.role || 'user'
 
-        const user = await Repo.createUser(name, password)
+        if (shouldSanitize) {
+            // When using the api only normal users can be created. In case of creating an admin, 
+            // the server owner has to change the role by hand in the database!
+            role = 'user'
+        }
+
+        const user = await Repo.createUser(name, password, role)
         const token = await user.getSignedJwtToken()
         redirectToFeed(res, 200, token)
     } catch (err) {
@@ -51,7 +58,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.patch('/update-password', protect, async (req, res) => {
+router.patch('/update-password', protect, async (req, res, next) => {
     try {
         const user = req.user
         const curPassword = req.query.password
@@ -102,7 +109,7 @@ router.patch('/update-password', protect, async (req, res) => {
     }
 })
 
-router.get('/whoami', protect, async (req, res) => {
+router.get('/whoami', protect, async (req, res, next) => {
     try {
         if (req.user) {
             res.status(200).json(req.user)

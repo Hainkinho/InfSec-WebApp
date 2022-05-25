@@ -86,6 +86,11 @@ describe("Create User", () => {
             Repo.createUser("bob", "123")
         ).rejects.toThrow()
     })
+
+    test('Test create admin User', async () => {
+        const user = await Repo.createUser("admin", "helloWORLD123!", 'admin')
+        expect(user.role).toBe('admin')
+    })
 })
 
 

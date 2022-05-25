@@ -25,12 +25,16 @@ module.exports = class Repository {
         return null
     }
 
-    static async createUser(name, password) {
+    static async createUser(name, password, role) {
         if (!name || name == "") { throw new CustomError(400, "Name cannot be empty") }
         if (!password || password == "") { throw new CustomError(400, "Password cannot be empty") }
         if (!this.isStrongPassword(password)) { return }
         const encryptedPassword = await this.encrypt(password)
-        return await new User({ name: name, password: encryptedPassword }).save()
+        return await new User({
+            name: name, 
+            password: encryptedPassword,
+            role: role || 'user'
+         }).save()
     }
 
     static isStrongPassword(password) {

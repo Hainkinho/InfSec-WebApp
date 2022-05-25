@@ -15,6 +15,13 @@ const userSchema = new Schema({
         required: true
     },
 
+    role: {
+        type: String,
+        required: true,
+        enum : ['user','admin'],
+        default: 'user'
+    }
+
 }, { timestamps: true })
 
 userSchema.methods.getSignedJwtToken = function() {
@@ -29,7 +36,7 @@ userSchema.methods.hasPassword = async function(password) {
 }
 
 userSchema.methods.isAdmin = function() {
-    return this.name == 'admin'
+    return this.role == 'admin'
 }
 
 const User = mongoose.model('User', userSchema)
