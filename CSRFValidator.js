@@ -8,7 +8,6 @@ module.exports =  class CSRFTokenValidator {
         const id = uuidv4()
         const expireDate = new Date(Date.now() + 10 * 60 * 1000)
         this._ids.set(id, expireDate)
-        console.log(this._ids)
         return id
     }
 
