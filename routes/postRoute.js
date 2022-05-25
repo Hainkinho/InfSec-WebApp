@@ -19,7 +19,7 @@ router.post('/', protect, async (req, res, next) => {
         const post = await Repo.createPost(user, text)
 
         const postRes = await DataMapper.mapPostRelationsToObj(post)
-        res.status(200).json(postRes)
+        res.status(201).json(postRes)
     } catch (err) {
         next(err)
     }
@@ -39,7 +39,7 @@ router.post('/comment', protect, async (req, res, next) => {
         const comment = await Repo.createCommentForPost(post, user, text)
 
         const postRes = await DataMapper.mapPostRelationsToObj(post)
-        res.status(200).json(postRes)
+        res.status(201).json(postRes)
     } catch (err) {
         next(err)
     }
@@ -62,7 +62,7 @@ async function deletePostEndpoint(req, res, next) {
         const post = await Post.findById(postID)
         await Repo.deletePost(post)
 
-        res.status(200).json({ success: true})
+        res.status(202).json({ success: true})
     } catch (err) {
         next(err)
     }
@@ -84,7 +84,7 @@ router.delete('/comment', adminOnlyProtect, async (req, res, next) => {
         const comment = await Comment.findById(commentID)
         await Repo.deleteCommentFromPost(comment, post)
 
-        res.status(200).json({ success: true})
+        res.status(202).json({ success: true})
     } catch (err) {
         next(err)
     }
