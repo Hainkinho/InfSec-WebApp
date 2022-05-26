@@ -1,6 +1,8 @@
 const colors = require('colors')
 const CustomError = require('../CustomError')
 
+const shouldSanitize = process.env.NODE_ENV == "sanitized"
+
 const errorHandler = (err, req, res, next) => {
     console.log(err.stack.red.bold)
     if (err instanceof CustomError) {
@@ -15,7 +17,12 @@ const errorHandler = (err, req, res, next) => {
         return
     }
 
-    res.status(500).json({error: err.message})
+    if (shouldSanitize) {
+        // This protects the server from leaking implementation details of yet unknown errors.
+        res.status(500).json({error: 'Something went wrong'})
+    } else {
+        res.status(500).json({error: err.message})
+    }
 }
 
 module.exports = errorHandler
