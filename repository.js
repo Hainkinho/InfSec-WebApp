@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs')
 const CustomError = require('./CustomError')
 const { passwordStrength } = require('check-password-strength')
 
+const shouldSanitize = process.env.NODE_ENV == "sanitized"
+
 module.exports = class Repository {
 
     static async getUser(name, password) {
@@ -28,7 +30,7 @@ module.exports = class Repository {
     static async createUser(name, password, role) {
         if (!name || name == "") { throw new CustomError(400, "Name cannot be empty") }
         if (!password || password == "") { throw new CustomError(400, "Password cannot be empty") }
-        if (!this.isStrongPassword(password)) { return }
+        if (shouldSanitize && !this.isStrongPassword(password)) { return }
         const encryptedPassword = await this.encrypt(password)
         return await new User({
             name: name, 
