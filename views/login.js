@@ -29,8 +29,8 @@ loginBtn.addEventListener('click', async e => {
 
     const res = await fetch('/api/users/login', header)
 
-    if (res.redirected) {
-        window.location.href = res.url
+    if (res.status >= 200 && res.status < 300) {
+        window.location.href = '/'
     } else {
         showError("Name and password don't match. Please try again...")
     }
@@ -59,8 +59,8 @@ registerBtn.addEventListener('click', async e => {
     }
 
     const res = await fetch('/api/users', header)
-    if (res.redirected) {
-        window.location.href = res.url
+    if (res.status >= 200 && res.status < 300) {
+        window.location.href = '/'
     } else {
         const json = await res.json()
         const errMessage = json.error
