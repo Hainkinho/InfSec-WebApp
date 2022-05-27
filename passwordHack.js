@@ -6,8 +6,10 @@ let foundUsers = []
 async function start() {
     await fetchUsers()
     console.log('\n-------------------------\n')
+    const numOfFoundAdmins = foundUsers.filter(user => user.role == 'admin').length
+    const numOfNormalUsers = foundUsers.length - numOfFoundAdmins
     console.log(foundUsers)
-    console.log(`Found ${foundUsers.length} users`)
+    console.log(`Found ${numOfFoundAdmins} admins and ${numOfNormalUsers} normal users.`)
 }
 
 async function fetchUsers() {
