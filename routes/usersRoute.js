@@ -23,7 +23,11 @@ router.post('/login', async (req, res, next) => {
             return 
         }
         const token = await user.getSignedJwtToken()
-        redirectToFeed(res, token)
+        res
+            .status(200)
+            .cookie('token', token, getCookieOptions())
+            .json({token: token})
+        // redirectToFeed(res, token)
     } catch (err) {
         next(err)
     }
@@ -127,8 +131,7 @@ router.get('/whoami', protect, async (req, res, next) => {
     }
 })
 
-
-function redirectToFeed(res, token) {
+function getCookieOptions() {
     let options = {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
         httpOnly: false
@@ -137,11 +140,16 @@ function redirectToFeed(res, token) {
     if (shouldSanitize) {
         options.httpOnly = true // adds more security to cookie, so that within the browser javascript code cannot access it
     }
+    return options
+}
+
+function redirectToFeed(res, token) {
+    let options = getCookieOptions()
 
     console.log("Sending redirection link to feed view")
     res
-        .cookie('token', token, options)
-        .redirect(getUrl('/'))
+    .cookie('token', token, options)
+    .redirect(getUrl('/'))
 }
 
 
