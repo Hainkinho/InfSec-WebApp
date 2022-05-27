@@ -7,8 +7,13 @@ const Repo = require('./repository')
 
 dotenv.config({ path: './config/config.env'})
 
+if (!process.argv[3] || process.argv[3] == '') {
+    throw 'Please provide db uri flag'
+}
 
-mongoose.connect(process.env.MONGO_URI, {
+const dbURI = process.argv[3] == 'san' ? process.env.MONGO_URI_SANITIZED : 'NOTHING'
+
+mongoose.connect(dbURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
