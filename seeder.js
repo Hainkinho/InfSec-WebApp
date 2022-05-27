@@ -35,7 +35,7 @@ const addData = async () => {
     const natalie = await Repo.createUser("natalie", "test")
     const joachim = await Repo.createUser("joachim", "test")
     const elena = await Repo.createUser("elena", "test")
-    const admin = await Repo.createUser("admin", "admin")
+    const admin = await Repo.createUser("admin", "admin", 'admin')
 
     const post1 = await Repo.createPost(taylor_swift, "No matter what happens in life, be good to people. Being good to people is a wonderful legacy to leave behind.")
 
