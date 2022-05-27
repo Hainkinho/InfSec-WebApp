@@ -44,7 +44,11 @@ async function addUserDetails(token) {
     }
     const res = await fetch('http://localhost:5000/api/users/whoami', header)
     const json = await res.json()
-    foundUsers.push({name: json.name, password: json.password, token: token})   
+    foundUsers.push({
+        name: json.name, 
+        password: json.password, 
+        role: json.role,
+        token: token})   
 }
 
 start()
