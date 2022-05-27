@@ -5,8 +5,9 @@ let foundUsers = []
 
 async function start() {
     await fetchUsers()
-    console.log('-------------------------')
+    console.log('\n-------------------------\n')
     console.log(foundUsers)
+    console.log(`Found ${foundUsers.length} users`)
 }
 
 async function fetchUsers() {
@@ -27,21 +28,23 @@ async function fetchUsers() {
         const res = await fetch('http://localhost:5000/api/users/login', header)
         if (res.status == 200) {
             const json = await res.json()
-            const token = json.token
-    
-            const header2 = {
-                method: 'GET',
-                headers: {
-                    cookie: `token=${token}`
-                },
-            }
-            const res2 = await fetch('http://localhost:5000/api/users/whoami', header2)
-            const json2 = await res2.json()
-            foundUsers.push({name: json2.name, password: json2.password, token: token})
+            await addUserDetails(json.token)
         } else {
             return
         }
     }
+}
+
+async function addUserDetails(token) {
+    const header = {
+        method: 'GET',
+        headers: {
+            cookie: `token=${token}`
+        },
+    }
+    const res = await fetch('http://localhost:5000/api/users/whoami', header)
+    const json = await res.json()
+    foundUsers.push({name: json.name, password: json.password, token: token})   
 }
 
 start()
