@@ -47,7 +47,7 @@ async function clickedCommentBtn(e) {
     console.log(postID, text)
 
     const header = getHeader('POST', { postID: postID, text: text })
-    const res = await fetch('http://localhost:5000/api/posts/comment', header)
+    const res = await fetch('/api/posts/comment', header)
     if (res.status >= 200 || res.status < 300) {
         window.location.reload();
     }
@@ -62,7 +62,7 @@ async function addPostBtnClicked(e) {
     console.log(postText)
 
     const header = getHeader('POST', { text: postText })
-    const res = await fetch('http://localhost:5000/api/posts', header)
+    const res = await fetch('/api/posts', header)
     if (res.status >= 200 || res.status < 300) {
         window.location.reload();
     }
@@ -76,7 +76,7 @@ async function deletePost(e) {
     console.log(postID)
 
     const header = getHeader('DELETE', { postID: postID })
-    const res = await fetch('http://localhost:5000/api/posts', header)
+    const res = await fetch('/api/posts', header)
     if (res.status >= 200 || res.status < 300) {
         window.location.reload();
     }
@@ -91,7 +91,7 @@ async function deleteComment(e) {
     console.log(postID, commentID)
 
     const header = getHeader('DELETE', { postID: postID, commentID: commentID })
-    const res = await fetch('http://localhost:5000/api/posts/comment', header)
+    const res = await fetch('/api/posts/comment', header)
     if (res.status >= 200 || res.status < 300) {
         window.location.reload();
     }

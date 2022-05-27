@@ -27,9 +27,7 @@ loginBtn.addEventListener('click', async e => {
         body: JSON.stringify({name: name, password: password })
     }
 
-    const url = `http://localhost:5000/api/users/login`
-    console.log(url)
-    const res = await fetch(url, header)
+    const res = await fetch('/api/users/login', header)
 
     if (res.redirected) {
         window.location.href = res.url
@@ -60,7 +58,7 @@ registerBtn.addEventListener('click', async e => {
         body: JSON.stringify({name: name, password: password })
     }
 
-    const res = await fetch('http://localhost:5000/api/users', header)
+    const res = await fetch('/api/users', header)
     if (res.redirected) {
         window.location.href = res.url
     } else {

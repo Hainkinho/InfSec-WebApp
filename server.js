@@ -60,7 +60,7 @@ app.use('/api/posts', postRoute)
 app.use(errorHandler)
 
 
-const PORT = process.env.PORT || 5000
+const PORT = shouldSanitize ? 5050 : 5000
 
 app.listen(
     PORT, 

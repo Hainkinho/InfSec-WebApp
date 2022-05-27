@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
 const Repo = require('../repository')
+const getUrl = require('../UrlService')
 const { protect } = require('../middleware/auth')
 const CSRFTokenValidator = require('../CSRFValidator')
 const CustomError = require('../CustomError')
@@ -31,7 +32,7 @@ router.post('/login', async (req, res, next) => {
 // Logout
 router.get('/logout', async (req, res, next) => {
     try {
-        res.clearCookie("token").redirect('http://localhost:5000/login');
+        res.clearCookie("token").redirect(getUrl('/login'));
     } catch (err) {
         next(err)
     }
@@ -140,7 +141,7 @@ function redirectToFeed(res, token) {
     console.log("Sending redirection link to feed view")
     res
         .cookie('token', token, options)
-        .redirect('http://localhost:5000')
+        .redirect(getUrl('/'))
 }
 
 

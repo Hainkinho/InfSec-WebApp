@@ -26,9 +26,10 @@
 
     <script>
         const logoutBtn = document.getElementById('logout-btn')
+
         logoutBtn.addEventListener('click', async (e) => {
             console.log("Logout")
-            const res = await fetch('http://localhost:5000/api/users/logout')
+            const res = await fetch('/api/users/logout')
             if (res.redirected) {
                 window.location.href = res.url
             }

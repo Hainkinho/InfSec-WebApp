@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const CustomError = require('../CustomError')
 const User = require('../models/user')
+const getUrl = require('../UrlService')
 
 const userProtect = async function(req, res, next) {
     const token = req.cookies.token
@@ -29,7 +30,7 @@ exports.adminOnlyProtect = async function(req, res, next) {
 }
 
 function redirectToLoginPage(res) {
-    res.redirect('http://localhost:5000/login')
+    res.redirect(getUrl('/login'))
 }
 
 async function getUserFromJWToken(token) {
