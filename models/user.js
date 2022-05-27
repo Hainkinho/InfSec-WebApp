@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
+const shouldSanitize = process.env.NODE_ENV == "sanitized"
+
 const userSchema = new Schema({
     name: {
         type: String,
@@ -31,8 +33,11 @@ userSchema.methods.getSignedJwtToken = function() {
 }
 
 userSchema.methods.hasPassword = async function(password) {
-    const match = await bcrypt.compare(password, this.password)
-    return match
+    if (shouldSanitize) {
+        const match = await bcrypt.compare(password, this.password)
+        return match
+    }
+    return password == this.password
 }
 
 userSchema.methods.isAdmin = function() {

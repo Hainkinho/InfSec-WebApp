@@ -31,10 +31,13 @@ module.exports = class Repository {
         if (!name || name == "") { throw new CustomError(400, "Name cannot be empty") }
         if (!password || password == "") { throw new CustomError(400, "Password cannot be empty") }
         if (shouldSanitize && !this.isStrongPassword(password)) { return }
-        const encryptedPassword = await this.encrypt(password)
+        let newPassword = password
+        if (shouldSanitize) {
+            newPassword = await this.encrypt(password)
+        }
         return await new User({
             name: name, 
-            password: encryptedPassword,
+            password: newPassword,
             role: role || 'user'
          }).save()
     }
@@ -51,8 +54,11 @@ module.exports = class Repository {
 
     // TODO: write Unit Test
     static async updatePassword(user, newPassword) {
-        const encryptedPassword = await this.encrypt(newPassword)
-        user.password = encryptedPassword
+        let password = newPassword
+        if (shouldSanitize) {
+            password = await this.encrypt(newPassword)
+        }
+        user.password = password
         await user.save()
     }
 

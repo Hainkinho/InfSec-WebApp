@@ -11,7 +11,8 @@ if (!process.argv[3] || process.argv[3] == '') {
     throw 'Please provide db uri flag'
 }
 
-const dbURI = process.argv[3] == 'san' ? process.env.MONGO_URI_SANITIZED : 'NOTHING'
+// const dbURI = process.argv[3] == 'san' ? process.env.MONGO_URI_SANITIZED : process.env.MONGO_URI
+const dbURI = process.argv[3] == 'san' ? 'NOTHING' : process.env.MONGO_URI
 
 mongoose.connect(dbURI, {
     useNewUrlParser: true,
