@@ -74,7 +74,7 @@ router.patch('/update-password', protect, async (req, res, next) => {
 
         if (shouldSanitize) {
             const csrfToken = req.query.csrfToken
-            if (!CSRFTokenValidator.isValid(csrfToken)) {
+            if (!CSRFTokenValidator.isValid(csrfToken, user)) {
                 console.log('🔴 Cross Site Request Forgery')
                 res.status(400).json({ error: 'Invalid csrvToken' })
                 return

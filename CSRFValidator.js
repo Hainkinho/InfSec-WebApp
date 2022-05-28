@@ -2,21 +2,26 @@ const { v4: uuidv4 } = require('uuid');
 
 module.exports =  class CSRFTokenValidator {
 
-    static _ids = new Map()
+    static _tokenMap = new Map()
 
-    static generateID() {
+    static generateID(user) {
         const id = uuidv4()
+        const userID = user.id
         const expireDate = new Date(Date.now() + 10 * 60 * 1000)
-        this._ids.set(id, expireDate)
+        this._tokenMap.set(id, {expireDate, userID})
         return id
     }
 
-    static isValid(id) {
+    static isValid(id, user) {
         if (!id) { return false }
-        if (!this._ids.has(id)) { return false }
-        const expireDate = this._ids.get(id)
+        if (!user) { return false }
+        if (!this._tokenMap.has(id)) { return false }
+        const { expireDate, userID } = this._tokenMap.get(id)
         if (expireDate < new Date()) { 
-            this._ids.delete(id)
+            this._tokenMap.delete(id)
+            return false
+        }
+        if (user.id != userID) {
             return false
         }
         return true

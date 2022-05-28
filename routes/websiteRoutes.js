@@ -43,7 +43,7 @@ router.get('/', protect, async (req, res, next) => {
 // Reset Password
 router.get('/reset-password', protect, async (req, res, next) => {
     try {
-        const id = CSRFTokenValidator.generateID();
+        const id = CSRFTokenValidator.generateID(req.user);
         res.render('reset-password', { id: id})
     } catch (err) {
         next(err)
