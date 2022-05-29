@@ -6,12 +6,12 @@ const Comment = require('../models/comment')
 const bcrypt = require('bcryptjs')
 const Repo = require('../repository')
 const CustomError = require('../CustomError')
-const { protect, adminOnlyProtect } = require('../middleware/auth')
+const { userOnlyProtect, adminOnlyProtect } = require('../middleware/auth')
 const DataMapper = require('../dataMapper')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
-router.post('/', protect, async (req, res, next) => {
+router.post('/', userOnlyProtect, async (req, res, next) => {
     try {
         const user = req.user
         let text = req.body.text
@@ -25,7 +25,7 @@ router.post('/', protect, async (req, res, next) => {
     }
 })
 
-router.post('/comment', protect, async (req, res, next) => {
+router.post('/comment', userOnlyProtect, async (req, res, next) => {
     try {
         const postID = req.body.postID
         const user = req.user
@@ -48,7 +48,7 @@ router.post('/comment', protect, async (req, res, next) => {
 if (shouldSanitize) {
     router.delete('/', adminOnlyProtect, deletePostEndpoint)
 } else {
-    router.delete('/', protect, deletePostEndpoint)
+    router.delete('/', userOnlyProtect, deletePostEndpoint)
 }
 
 async function deletePostEndpoint(req, res, next) {

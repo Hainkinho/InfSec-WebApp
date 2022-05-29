@@ -3,7 +3,7 @@ const router = express.Router()
 const User = require('../models/user')
 const Repo = require('../repository')
 const getUrl = require('../UrlService')
-const { protect } = require('../middleware/auth')
+const { userOnlyProtect } = require('../middleware/auth')
 const CSRFTokenValidator = require('../CSRFValidator')
 const CustomError = require('../CustomError')
 const Repository = require('../repository')
@@ -63,7 +63,7 @@ router.post('/', async (req, res, next) => {
     }
 })
 
-router.patch('/update-password', protect, async (req, res, next) => {
+router.patch('/update-password', userOnlyProtect, async (req, res, next) => {
     try {
         const user = req.user
         const curPassword = req.query.password
@@ -114,7 +114,7 @@ router.patch('/update-password', protect, async (req, res, next) => {
     }
 })
 
-router.get('/whoami', protect, async (req, res, next) => {
+router.get('/whoami', userOnlyProtect, async (req, res, next) => {
     try {
         if (!req.user) {
             next(new CustomError(400, 'User not found'))

@@ -7,7 +7,7 @@ const User = require('../models/user')
 const DataMapper = require('../dataMapper')
 const CSRFTokenValidator = require('../CSRFValidator')
 
-const { protect, adminOnlyProtect } = require('../middleware/auth')
+const { userOnlyProtect, adminOnlyProtect } = require('../middleware/auth')
 
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
@@ -22,7 +22,7 @@ router.get('/login', async (req, res, next) => {
 
 
 // Feed
-router.get('/', protect, async (req, res, next) => {
+router.get('/', userOnlyProtect, async (req, res, next) => {
     try {
         let query = req.query.query
         const user = req.user
@@ -41,7 +41,7 @@ router.get('/', protect, async (req, res, next) => {
 })
 
 // Reset Password
-router.get('/reset-password', protect, async (req, res, next) => {
+router.get('/reset-password', userOnlyProtect, async (req, res, next) => {
     try {
         const id = CSRFTokenValidator.generateID(req.user);
         res.render('reset-password', { id: id})
@@ -54,7 +54,7 @@ router.get('/reset-password', protect, async (req, res, next) => {
 if (shouldSanitize) {
     router.get('/edit', adminOnlyProtect, editWebsiteEndpointMethod)
 } else {
-    router.get('/edit', protect, editWebsiteEndpointMethod)
+    router.get('/edit', userOnlyProtect, editWebsiteEndpointMethod)
 }
 
 async function editWebsiteEndpointMethod(req, res, next) {

@@ -3,7 +3,7 @@ const CustomError = require('../CustomError')
 const User = require('../models/user')
 const getUrl = require('../UrlService')
 
-const userProtect = async function(req, res, next) {
+exports.userOnlyProtect = async function(req, res, next) {
     const token = req.cookies.token
     const user = await getUserFromJWToken(token)
     if (!user) {
@@ -52,6 +52,3 @@ async function getUserFromJWToken(token) {
         return null
     }
 }
-
-
-exports.protect = userProtect
