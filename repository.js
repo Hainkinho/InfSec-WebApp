@@ -55,6 +55,7 @@ module.exports = class Repository {
     // TODO: write Unit Test
     static async updatePassword(user, newPassword) {
         let password = newPassword
+        if (shouldSanitize && !this.isStrongPassword(password)) { return }
         if (shouldSanitize) {
             password = await this.encrypt(newPassword)
         }
