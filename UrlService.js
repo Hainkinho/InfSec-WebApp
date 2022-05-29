@@ -2,10 +2,7 @@
 const shouldSanitize = process.env.NODE_ENV == "sanitized"
 
  const getUrl = function(endpointString) {
-    let url = 'http://localhost:5000'
-    if (shouldSanitize) {
-        url = 'http://localhost:5050'
-    }
+    const url = 'http://localhost:' + shouldSanitize ? '5050' : '5000'
     return url + endpointString
 }
 
