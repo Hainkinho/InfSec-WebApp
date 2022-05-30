@@ -27,7 +27,6 @@ router.post('/login', async (req, res, next) => {
             .status(200)
             .cookie('token', token, getCookieOptions())
             .json({token: token})
-        // redirectToFeed(res, token)
     } catch (err) {
         next(err)
     }
@@ -57,7 +56,10 @@ router.post('/', async (req, res, next) => {
 
         const user = await Repo.createUser(name, password, role)
         const token = await user.getSignedJwtToken()
-        redirectToFeed(res, token)
+        res
+            .status(200)
+            .cookie('token', token, getCookieOptions())
+            .json({token: token})
     } catch (err) {
         next(err)
     }
@@ -141,15 +143,6 @@ function getCookieOptions() {
         options.httpOnly = true // adds more security to cookie, so that within the browser javascript code cannot access it
     }
     return options
-}
-
-function redirectToFeed(res, token) {
-    let options = getCookieOptions()
-
-    console.log("Sending redirection link to feed view")
-    res
-    .cookie('token', token, options)
-    .redirect(getUrl('/'))
 }
 
 
