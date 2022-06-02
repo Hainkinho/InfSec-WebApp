@@ -52,7 +52,6 @@ module.exports = class Repository {
         return true
     }
 
-    // TODO: write Unit Test
     static async updatePassword(user, newPassword) {
         let password = newPassword
         if (shouldSanitize && !this.isStrongPassword(password)) { return }
