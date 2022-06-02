@@ -6,8 +6,6 @@ const connectDB = async () => {
     const dbURI = shouldSanitize ? process.env.MONGO_URI_SANITIZED : process.env.MONGO_URI
     const conn = await mongoose.connect(dbURI, {
         useNewUrlParser: true,
-        // useCreateIndex: true,
-        // useFindAndModify: false,
         useUnifiedTopology: true
     })
 
